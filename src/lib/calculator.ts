@@ -101,18 +101,27 @@ function simulate(
 
   // Index lump sums by year-month for O(1) lookup
   const lumpSumMap = new Map<string, number>();
+  let immediateLumpSum = 0; // Everything <= current month
+  
+  // Normalise to 1st of current month
+  let currentDate = new Date();
+  currentDate.setDate(1); 
+  currentDate.setHours(0, 0, 0, 0);
+  const currentYM = toYearMonth(currentDate);
+
   if (applyExtras) {
     for (const ls of lumpSums) {
-      const key = ls.date.substring(0, 7); // "YYYY-MM"
-      lumpSumMap.set(key, (lumpSumMap.get(key) ?? 0) + ls.amount);
+      const ym = ls.date.substring(0, 7); // "YYYY-MM"
+      if (ym <= currentYM) {
+        immediateLumpSum += ls.amount;
+      } else {
+        lumpSumMap.set(ym, (lumpSumMap.get(ym) ?? 0) + ls.amount);
+      }
     }
   }
 
   const schedule: MonthlyEntry[] = [];
   let totalInterest = 0;
-  let currentDate = new Date();
-  currentDate.setDate(1); // normalise to 1st of current month
-  currentDate.setHours(0, 0, 0, 0);
 
   const MAX_MONTHS = 600; // safety cap: 50 years
 
@@ -146,12 +155,15 @@ function simulate(
     let surplus = 0;
     if (applyExtras) {
       surplus = Math.max(0, totalMonthlyIncome - totalMinEMI) + extraMonthlyPayment;
-    }
-
-    // 3. Add lump sum injections for this month
-    const ym = toYearMonth(currentDate);
-    if (applyExtras && lumpSumMap.has(ym)) {
-      surplus += lumpSumMap.get(ym)!;
+      
+      // 3. Add lump sum injections for this month (and immediate ones in month 1)
+      if (month === 1) {
+        surplus += immediateLumpSum;
+      }
+      const ym = toYearMonth(currentDate);
+      if (lumpSumMap.has(ym)) {
+        surplus += lumpSumMap.get(ym)!;
+      }
     }
 
     // 4. Distribute surplus based on strategy
