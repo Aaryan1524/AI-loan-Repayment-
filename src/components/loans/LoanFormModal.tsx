@@ -212,7 +212,7 @@ export default function LoanFormModal({
     if (!validate()) return;
 
     const loan: Loan = {
-      id: editingLoan?.id || `loan-${Date.now()}`,
+      id: editingLoan?.id || crypto.randomUUID(),
       type,
       name: name.trim(),
       principal: parseFloat(principal),

@@ -42,7 +42,7 @@ export function ScenarioDrawer({ isOpen, onClose, scenario, onSave }: Props) {
   const handleSave = () => {
     if (!name.trim()) return;
     onSave({
-      id: scenario ? scenario.id : `scenario-${Date.now()}`,
+      id: scenario ? scenario.id : crypto.randomUUID(),
       name: name.trim(),
       strategy,
       extraMonthlyPayment: extraPayment,
@@ -66,7 +66,7 @@ export function ScenarioDrawer({ isOpen, onClose, scenario, onSave }: Props) {
     setLumpSums([
       ...lumpSums,
       {
-        id: `ls-${Date.now()}`,
+        id: crypto.randomUUID(),
         date: new Date().toISOString().split("T")[0],
         amount: 1000,
         label: "New Payment",

@@ -110,7 +110,7 @@ export default function AIAdvisorChat() {
   const sendMessage = async (text: string) => {
     if (!text.trim() || isTyping) return;
     setHasStarted(true);
-    const userMsg: Message = { role: "user", content: text.trim(), id: `u-${Date.now()}` };
+    const userMsg: Message = { role: "user", content: text.trim(), id: crypto.randomUUID() };
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
     setInput("");
@@ -125,9 +125,9 @@ export default function AIAdvisorChat() {
         }),
       });
       const data = await res.json();
-      setMessages(prev => [...prev, { role: "assistant", content: data.reply ?? "Sorry, I couldn't respond. Try again.", id: `a-${Date.now()}` }]);
+      setMessages(prev => [...prev, { role: "assistant", content: data.reply ?? "Sorry, I couldn't respond. Try again.", id: crypto.randomUUID() }]);
     } catch {
-      setMessages(prev => [...prev, { role: "assistant", content: "Network error — please check your connection and try again.", id: `err-${Date.now()}` }]);
+      setMessages(prev => [...prev, { role: "assistant", content: "Network error — please check your connection and try again.", id: crypto.randomUUID() }]);
     } finally {
       setIsTyping(false);
     }

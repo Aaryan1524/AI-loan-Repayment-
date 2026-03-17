@@ -175,12 +175,27 @@ export const useAppStore = create<AppState>()((set, get) => ({
     set({ isLoading: true });
     const supabase = createClient();
 
+    // Ensure we have a session before querying to satisfy RLS
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      console.warn("Hydration skipped: No authenticated user found.", authError);
+      set({ isLoading: false, isHydrated: true });
+      return;
+    }
+
     const [loansRes, assetsRes, incomeRes, scenariosRes] = await Promise.all([
       supabase.from("loans").select("*"),
       supabase.from("assets").select("*"),
       supabase.from("income_sources").select("*"),
       supabase.from("scenarios").select("*"),
     ]);
+
+    // Log any query errors for debugging
+    if (loansRes.error) console.error("Error fetching loans:", loansRes.error);
+    if (assetsRes.error) console.error("Error fetching assets:", assetsRes.error);
+    if (incomeRes.error) console.error("Error fetching income:", incomeRes.error);
+    if (scenariosRes.error) console.error("Error fetching scenarios:", scenariosRes.error);
 
     const loans = (loansRes.data || []).map(mapLoanRow);
     const assets = (assetsRes.data || []).map(mapAssetRow);
@@ -209,7 +224,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) {
-        // Not logged in — loan stays in local state for this session
+        console.warn("Supabase write skipped: User not authenticated.");
         return;
       }
       supabase
@@ -230,8 +245,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
         })
         .then(({ error }) => {
           if (error) {
-            console.error("Supabase loan insert failed:", error);
-            // Don't rollback — loan stays visible; user can retry or refresh
+            console.error("Supabase loan insert failed (Check if ID is UUID):", error);
           }
         });
     });
