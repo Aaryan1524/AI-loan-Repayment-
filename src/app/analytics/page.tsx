@@ -193,7 +193,7 @@ export default function AnalyticsPage() {
 
   /* ─── Chart 4 Data: Cash Flow ─── */
   // Use hook's totalMonthlyEMI for consistency
-  const totalMinEMI = loans.reduce((sum: number, l: any) => {
+  const totalMinEMI = loans.reduce((sum: number, l: { balance: number; emiOverride?: number; termMonths: number; rate: number; principal: number }) => {
     if (l.balance <= 0) return sum;
     if (l.emiOverride) return sum + l.emiOverride;
     if (l.termMonths === 0) return sum + calculateEMI(l.balance, l.rate, 0);
