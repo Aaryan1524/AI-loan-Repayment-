@@ -100,8 +100,8 @@ export function useFinancialData(): FinancialData {
         if (l.balance <= 0) return sum;
 
         if (l.emiOverride) return sum + l.emiOverride;
-        if (l.termMonths === 0) return sum + l.balance * (l.rate / 100 / 12) + l.balance * 0.02;
-        return sum + calculateEMI(l.balance, l.rate, l.termMonths);
+        if (l.termMonths === 0) return sum + calculateEMI(l.balance, l.rate, 0);
+        return sum + calculateEMI(l.principal, l.rate, l.termMonths);
       }, 0),
     [loans]
   );

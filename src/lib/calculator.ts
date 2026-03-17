@@ -94,7 +94,7 @@ function simulate(
     balance: l.balance,
     rate: l.rate,
     termMonths: l.termMonths,
-    emi: calculateEMI(l.balance, l.rate, l.termMonths),
+    emi: l.emiOverride || (l.termMonths === 0 ? calculateEMI(l.balance, l.rate, 0) : calculateEMI(l.principal, l.rate, l.termMonths)),
   }));
 
   const totalMonthlyIncome = incomeSources.reduce((s, i) => s + i.monthlyAmount, 0);
