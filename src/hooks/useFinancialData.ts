@@ -96,6 +96,9 @@ export function useFinancialData(): FinancialData {
   const totalMonthlyEMI = useMemo(
     () =>
       loans.reduce((sum, l) => {
+        // A loan with no balance should not have an ongoing EMI obligation
+        if (l.balance <= 0) return sum;
+
         if (l.emiOverride) return sum + l.emiOverride;
         if (l.termMonths === 0) return sum + l.balance * (l.rate / 100 / 12) + l.balance * 0.02;
         return sum + calculateEMI(l.balance, l.rate, l.termMonths);
