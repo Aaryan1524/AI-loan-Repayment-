@@ -270,16 +270,20 @@ export const useAppStore = create<AppState>()((set, get) => ({
     set((s) => ({ loans: s.loans.filter((l) => l.id !== id) }));
 
     const supabase = createClient();
-    supabase
-      .from("loans")
-      .delete()
-      .eq("id", id)
-      .then(({ error }) => {
-        if (error) {
-          console.error("Supabase loan delete failed:", error);
-          set({ loans: prev });
-        }
-      });
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) { set({ loans: prev }); return; }
+      supabase
+        .from("loans")
+        .delete()
+        .eq("id", id)
+        .eq("user_id", user.id)
+        .then(({ error }) => {
+          if (error) {
+            console.error("Supabase loan delete failed:", error);
+            set({ loans: prev });
+          }
+        });
+    });
   },
 
   /* ═══════════════════════════════════════════════════════════════════ */
@@ -342,16 +346,20 @@ export const useAppStore = create<AppState>()((set, get) => ({
     set((s) => ({ assets: s.assets.filter((a) => a.id !== id) }));
 
     const supabase = createClient();
-    supabase
-      .from("assets")
-      .delete()
-      .eq("id", id)
-      .then(({ error }) => {
-        if (error) {
-          console.error("Supabase asset delete failed:", error);
-          set({ assets: prev });
-        }
-      });
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) { set({ assets: prev }); return; }
+      supabase
+        .from("assets")
+        .delete()
+        .eq("id", id)
+        .eq("user_id", user.id)
+        .then(({ error }) => {
+          if (error) {
+            console.error("Supabase asset delete failed:", error);
+            set({ assets: prev });
+          }
+        });
+    });
   },
 
   /* ═══════════════════════════════════════════════════════════════════ */
@@ -414,16 +422,20 @@ export const useAppStore = create<AppState>()((set, get) => ({
     set((s) => ({ incomeSources: s.incomeSources.filter((i) => i.id !== id) }));
 
     const supabase = createClient();
-    supabase
-      .from("income_sources")
-      .delete()
-      .eq("id", id)
-      .then(({ error }) => {
-        if (error) {
-          console.error("Supabase income delete failed:", error);
-          set({ incomeSources: prev });
-        }
-      });
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) { set({ incomeSources: prev }); return; }
+      supabase
+        .from("income_sources")
+        .delete()
+        .eq("id", id)
+        .eq("user_id", user.id)
+        .then(({ error }) => {
+          if (error) {
+            console.error("Supabase income delete failed:", error);
+            set({ incomeSources: prev });
+          }
+        });
+    });
   },
 
   /* ═══════════════════════════════════════════════════════════════════ */
@@ -490,16 +502,20 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }));
 
     const supabase = createClient();
-    supabase
-      .from("scenarios")
-      .delete()
-      .eq("id", id)
-      .then(({ error }) => {
-        if (error) {
-          console.error("Supabase scenario delete failed:", error);
-          set({ scenarios: prev });
-        }
-      });
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) { set({ scenarios: prev }); return; }
+      supabase
+        .from("scenarios")
+        .delete()
+        .eq("id", id)
+        .eq("user_id", user.id)
+        .then(({ error }) => {
+          if (error) {
+            console.error("Supabase scenario delete failed:", error);
+            set({ scenarios: prev });
+          }
+        });
+    });
   },
 
   setActiveScenario: (id) => set({ activeScenario: id }),
