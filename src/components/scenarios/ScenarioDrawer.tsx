@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X, Plus, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import type { Scenario, Strategy, LumpSum } from "@/lib/store";
@@ -20,9 +20,12 @@ export function ScenarioDrawer({ isOpen, onClose, scenario, onSave }: Props) {
   const [customOrder, setCustomOrder] = useState<string[]>([]);
   const [lumpSums, setLumpSums] = useState<LumpSum[]>([]);
 
-  // Initialize form when drawer opens
+  // Prevent multiple re-initializations if loans or other props change while open
+  const initialized = useRef(false);
+
+  // Initialize form when drawer opens or edited scenario changes
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && (!initialized.current || scenario?.id !== (scenario ? scenario.id : null))) {
       if (scenario) {
         setName(scenario.name);
         setStrategy(scenario.strategy);
@@ -36,6 +39,9 @@ export function ScenarioDrawer({ isOpen, onClose, scenario, onSave }: Props) {
         setCustomOrder(loans.map((l) => l.id));
         setLumpSums([]);
       }
+      initialized.current = true;
+    } else if (!isOpen) {
+      initialized.current = false;
     }
   }, [isOpen, scenario, loans]);
 
@@ -79,7 +85,7 @@ export function ScenarioDrawer({ isOpen, onClose, scenario, onSave }: Props) {
   };
 
   const removeLumpSum = (id: string) => {
-    setLumpSums(lumpSums.filter((ls) => ls.id !== id));
+    setLumpSums(prev => prev.filter((ls) => ls.id !== id));
   };
 
   if (!isOpen) return null;
@@ -94,7 +100,7 @@ export function ScenarioDrawer({ isOpen, onClose, scenario, onSave }: Props) {
           <h2 className="text-xl font-display font-medium text-text-main-light dark:text-text-main-dark">
             {scenario ? "Edit Scenario" : "New Scenario"}
           </h2>
-          <button onClick={onClose} className="p-2 hover:bg-border-light/30 rounded-full text-text-muted-light">
+          <button type="button" onClick={onClose} className="p-2 hover:bg-border-light/30 rounded-full text-text-muted-light">
             <X size={20} />
           </button>
         </div>
@@ -145,6 +151,7 @@ export function ScenarioDrawer({ isOpen, onClose, scenario, onSave }: Props) {
                 return (
                   <button
                     key={strat}
+                    type="button"
                     onClick={() => setStrategy(strat)}
                     className={`w-full text-left p-3 border rounded-xl transition-all ${
                       strategy === strat
@@ -209,6 +216,7 @@ export function ScenarioDrawer({ isOpen, onClose, scenario, onSave }: Props) {
                       {strategy === "custom" && (
                         <div className="flex flex-col gap-1">
                           <button
+                            type="button"
                             disabled={idx === 0}
                             onClick={() => moveLoan(idx, "up")}
                             className="hover:text-primary disabled:opacity-30 disabled:hover:text-inherit"
@@ -216,6 +224,7 @@ export function ScenarioDrawer({ isOpen, onClose, scenario, onSave }: Props) {
                             <ArrowUp size={16} />
                           </button>
                           <button
+                            type="button"
                             disabled={idx === customOrder.length - 1}
                             onClick={() => moveLoan(idx, "down")}
                             className="hover:text-primary disabled:opacity-30 disabled:hover:text-inherit"
@@ -261,6 +270,7 @@ export function ScenarioDrawer({ isOpen, onClose, scenario, onSave }: Props) {
                 One-off Injections
               </label>
               <button
+                type="button"
                 onClick={addLumpSum}
                 className="text-xs font-medium text-primary hover:text-primary/80 flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-md"
               >
@@ -277,6 +287,7 @@ export function ScenarioDrawer({ isOpen, onClose, scenario, onSave }: Props) {
                 {lumpSums.map((ls) => (
                   <div key={ls.id} className="p-3 border border-border-light dark:border-border-dark rounded-xl bg-background-light dark:bg-background-dark space-y-3 relative">
                     <button
+                      type="button"
                       onClick={() => removeLumpSum(ls.id)}
                       className="absolute top-3 right-3 text-text-muted-light hover:text-red-500 transition-colors"
                     >
@@ -327,6 +338,7 @@ export function ScenarioDrawer({ isOpen, onClose, scenario, onSave }: Props) {
         {/* Footer */}
         <div className="p-6 border-t border-border-light dark:border-border-dark">
           <button
+            type="button"
             onClick={handleSave}
             disabled={!name.trim()}
             className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 rounded-xl transition-colors disabled:opacity-50"

@@ -487,22 +487,26 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }));
 
     const supabase = createClient();
-    supabase
-      .from("scenarios")
-      .update({
-        name: scenario.name,
-        strategy: scenario.strategy,
-        custom_order: scenario.customOrder || null,
-        lump_sums: scenario.lumpSums,
-        extra_monthly_payment: scenario.extraMonthlyPayment,
-      })
-      .eq("id", scenario.id)
-      .then(({ error }) => {
-        if (error) {
-          console.error("Supabase scenario update failed:", error);
-          set({ scenarios: prev });
-        }
-      });
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      supabase
+        .from("scenarios")
+        .update({
+          name: scenario.name,
+          strategy: scenario.strategy,
+          custom_order: scenario.customOrder || null,
+          lump_sums: scenario.lumpSums,
+          extra_monthly_payment: scenario.extraMonthlyPayment,
+        })
+        .eq("id", scenario.id)
+        .eq("user_id", user.id)
+        .then(({ error }) => {
+          if (error) {
+            console.error("Supabase scenario update failed:", error);
+            set({ scenarios: prev });
+          }
+        });
+    });
   },
 
   removeScenario: (id) => {
