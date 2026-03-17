@@ -95,14 +95,13 @@ function InsightSkeleton() {
 
 export default function DashboardPage() {
   const addLoan = useAppStore((s) => s.addLoan);
-  const hydrateFromSupabase = useAppStore((s) => s.hydrateFromSupabase);
   const currency = useAppStore((s) => s.currency);
 
   /* ─── Unified financial data ─── */
   const {
     loans, assets,
     totalDebt, payoffDate, totalInterestSaved,
-    suggestedLumpSums, calcResult, isLoading, isHydrated,
+    suggestedLumpSums, calcResult, isLoading,
     resolvedScenario,
   } = useFinancialData();
 
@@ -121,13 +120,6 @@ export default function DashboardPage() {
       }
     });
   }, []);
-
-  /* ─── Hydrate store from Supabase ─── */
-  useEffect(() => {
-    if (!isHydrated) {
-      hydrateFromSupabase();
-    }
-  }, [isHydrated, hydrateFromSupabase]);
 
   /* ─── AI Advice — debounced on loans changes ─── */
   const [advice, setAdvice] = useState<AdviceResponse | null>(null);

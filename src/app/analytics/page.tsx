@@ -50,9 +50,8 @@ export default function AnalyticsPage() {
   const {
     loans, assets, incomeSources,
     calcResult: result, totalInterestSaved,
-    isLoading, isHydrated,
+    isLoading,
   } = useFinancialData();
-  const hydrateFromSupabase = useAppStore((s) => s.hydrateFromSupabase);
   const currency = useAppStore((s) => s.currency);
   const [isClient, setIsClient] = useState(false);
   const [waterfallPeriod, setWaterfallPeriod] = useState<"Monthly" | "Quarterly" | "Yearly">("Yearly");
@@ -61,10 +60,6 @@ export default function AnalyticsPage() {
   useEffect(() => {
     setIsClient(true);
   }, []);
-
-  useEffect(() => {
-    if (!isHydrated) hydrateFromSupabase();
-  }, [isHydrated, hydrateFromSupabase]);
 
   // Fetch AI insight for print view
   useEffect(() => {

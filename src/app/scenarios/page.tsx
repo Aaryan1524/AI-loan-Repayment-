@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import AppNavigation from "../../components/layout/AppNavigation";
 import { Plus } from "lucide-react";
 import { useAppStore } from "@/lib/store";
@@ -14,13 +14,8 @@ import { ComparisonTable } from "@/components/scenarios/ComparisonTable";
 
 
 export default function ScenariosPage() {
-  const { loans, assets, incomeSources, scenarios, activeScenario, isLoading, isHydrated } = useFinancialData();
+  const { loans, assets, incomeSources, scenarios, activeScenario, isLoading } = useFinancialData();
   const { setActiveScenario, addScenario, updateScenario, removeScenario } = useAppStore();
-  const hydrateFromSupabase = useAppStore((s) => s.hydrateFromSupabase);
-
-  useEffect(() => {
-    if (!isHydrated) hydrateFromSupabase();
-  }, [isHydrated, hydrateFromSupabase]);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingScenario, setEditingScenario] = useState<Scenario | null>(null);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import AppNavigation from "../../components/layout/AppNavigation";
 import { useAppStore, type Loan } from "@/lib/store";
 import LoanFormModal from "@/components/loans/LoanFormModal";
@@ -67,16 +67,11 @@ function formatTerm(months: number) {
 }
 
 export default function LoansPage() {
-  const { loans, isLoading, isHydrated } = useFinancialData();
+  const { loans, isLoading } = useFinancialData();
   const addLoan = useAppStore((s) => s.addLoan);
   const updateLoan = useAppStore((s) => s.updateLoan);
   const currency = useAppStore((s) => s.currency);
   const removeLoan = useAppStore((s) => s.removeLoan);
-  const hydrateFromSupabase = useAppStore((s) => s.hydrateFromSupabase);
-
-  useEffect(() => {
-    if (!isHydrated) hydrateFromSupabase();
-  }, [isHydrated, hydrateFromSupabase]);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingLoan, setEditingLoan] = useState<Loan | null>(null);
