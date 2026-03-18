@@ -14,9 +14,11 @@ import {
   Wallet,
   Plus,
   RefreshCw,
+  LogOut,
 } from "lucide-react";
 import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import AppNavigation from "../../components/layout/AppNavigation";
 
 /* ─── Icon mapping for loan types ─── */
@@ -97,6 +99,7 @@ export default function DashboardPage() {
   const addLoan = useAppStore((s) => s.addLoan);
   const currency = useAppStore((s) => s.currency);
   const setCurrency = useAppStore((s) => s.setCurrency);
+  const router = useRouter();
 
   /* ─── Unified financial data ─── */
   const {
@@ -121,6 +124,13 @@ export default function DashboardPage() {
       }
     });
   }, []);
+
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/sign-in");
+    router.refresh();
+  };
 
   /* ─── AI Advice — debounced on loans changes ─── */
   const [advice, setAdvice] = useState<AdviceResponse | null>(null);
@@ -232,7 +242,7 @@ export default function DashboardPage() {
 
       {/* ─── Main Content ─── */}
       <main className="flex-1 px-4 py-6 md:px-9 md:py-8 pb-24 md:pb-8 overflow-y-auto relative">
-        <div>
+        <div className="max-w-[1200px] mx-auto">
           {/* Header */}
           <header className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
@@ -244,25 +254,34 @@ export default function DashboardPage() {
               </p>
             </div>
             
-            {/* Mobile-only currency picker */}
-            <div className="md:hidden flex items-center gap-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl p-1.5 self-start">
-              {SUPPORTED_CURRENCIES.map((c) => (
-                <button
-                  key={c.code}
-                  onClick={() => setCurrency(c.code as CurrencyCode)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                    currency === c.code
-                      ? "bg-primary/10 text-primary"
-                      : "text-text-muted-light dark:text-text-muted-dark hover:bg-border-light/20"
-                  }`}
-                >
-                  {c.symbol} {c.code}
-                </button>
-              ))}
+            {/* Mobile-only currency picker & Sign Out */}
+            <div className="md:hidden flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl p-1.5 self-start">
+                {SUPPORTED_CURRENCIES.map((c) => (
+                  <button
+                    key={c.code}
+                    onClick={() => setCurrency(c.code as CurrencyCode)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                      currency === c.code
+                        ? "bg-primary/10 text-primary"
+                        : "text-text-muted-light dark:text-text-muted-dark hover:bg-border-light/20"
+                    }`}
+                  >
+                    {c.symbol} {c.code}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={handleSignOut}
+                className="flex items-center justify-center w-10 h-10 rounded-xl bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-muted-light hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-colors"
+                title="Sign out"
+              >
+                <LogOut size={18} />
+              </button>
             </div>
           </header>
 
-          {/* ─── Top Summary Cards ─── */}
+          {/* ─── 1. Top Row: Stat Cards ─── */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6">
             {/* Total Debt */}
             <div className="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-[20px] p-5 md:p-6 flex flex-col justify-between">
@@ -311,7 +330,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* ─── AI Advisor Full Width Row ─── */}
+          {/* ─── 2. Middle Row: AI Insight ─── */}
           <div className="w-full mb-4 md:mb-6">
             <div className="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-[20px] p-5 md:p-6 w-full">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-terra-light dark:bg-[#4a3625] text-primary rounded-full text-xs font-bold uppercase tracking-wide mb-4 border border-border-light dark:border-[#5a422e]">
@@ -365,8 +384,8 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* ─── Bottom Grid: Loans + Chart ─── */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-6">
+          {/* ─── 3. Bottom Row: Loans + Chart ─── */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-6 mt-4 md:mt-6">
             {/* Loans List — from store, with empty state */}
             <div className="md:col-span-1 lg:col-span-5 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-[20px] p-5 md:p-6 w-full">
               <h3 className="text-lg md:text-xl font-medium mb-4 md:mb-6">Your loans</h3>
