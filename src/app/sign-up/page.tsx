@@ -58,9 +58,9 @@ export default function SignUpPage() {
 
   return (
     <div className="min-h-screen bg-background-light flex items-center justify-center px-4">
-      <div className="w-full max-w-[440px]">
+      <div className="w-full max-w-md mx-auto">
         {/* Logo */}
-        <div className="flex items-center gap-2 justify-center mb-10">
+        <div className="flex items-center gap-2 justify-center mb-8 md:mb-10">
           <div className="w-3 h-3 rounded-full bg-primary" />
           <span className="font-display font-bold text-2xl tracking-tight text-text-main-light">
             ClearDebt
@@ -68,18 +68,18 @@ export default function SignUpPage() {
         </div>
 
         {/* Card */}
-        <div className="bg-surface-light border border-border-light rounded-[24px] p-8 shadow-sm">
-          <h1 className="font-display text-3xl font-bold text-text-main-light mb-2 text-center">
+        <div className="bg-surface-light border border-border-light rounded-[24px] p-6 md:p-8 shadow-sm">
+          <h1 className="font-display text-2xl md:text-3xl font-bold text-text-main-light mb-2 text-center">
             Get started
           </h1>
-          <p className="text-text-muted-light text-center mb-8">
+          <p className="text-text-muted-light text-center mb-6 md:mb-8 text-sm md:text-base">
             Start your debt-free journey today
           </p>
 
           {/* Google OAuth */}
           <button
             onClick={handleGoogleSignUp}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border-2 border-border-light text-text-main-light font-medium hover:bg-background-light transition-colors mb-6"
+            className="w-full flex items-center justify-center gap-3 px-4 h-12 md:h-12 rounded-xl border-2 border-border-light text-text-main-light font-medium hover:bg-background-light transition-colors mb-6 text-sm md:text-base"
           >
             <svg width="20" height="20" viewBox="0 0 24 24">
               <path
@@ -129,7 +129,7 @@ export default function SignUpPage() {
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="John Doe"
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-border-light bg-background-light text-text-main-light placeholder:text-text-muted-light/50 outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
+                  className="w-full px-4 h-12 md:h-12 rounded-xl border border-border-light bg-background-light text-text-main-light placeholder:text-text-muted-light/50 outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
                 />
               </div>
 
@@ -143,7 +143,7 @@ export default function SignUpPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-border-light bg-background-light text-text-main-light placeholder:text-text-muted-light/50 outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
+                  className="w-full px-4 h-12 md:h-12 rounded-xl border border-border-light bg-background-light text-text-main-light placeholder:text-text-muted-light/50 outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
                 />
               </div>
 
@@ -158,7 +158,7 @@ export default function SignUpPage() {
                   placeholder="Minimum 8 characters"
                   required
                   minLength={8}
-                  className="w-full px-4 py-3 rounded-xl border border-border-light bg-background-light text-text-main-light placeholder:text-text-muted-light/50 outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
+                  className="w-full px-4 h-12 md:h-12 rounded-xl border border-border-light bg-background-light text-text-main-light placeholder:text-text-muted-light/50 outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
                 />
               </div>
 
@@ -186,7 +186,7 @@ export default function SignUpPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-primary text-white font-medium hover:bg-primary/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full h-12 md:h-12 rounded-xl bg-primary text-white font-medium hover:bg-primary/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm md:text-base"
             >
               {loading ? "Creating account..." : "Create account"}
             </button>
@@ -195,7 +195,7 @@ export default function SignUpPage() {
         </div>
 
         {/* Footer link */}
-        <p className="text-center mt-6 text-text-muted-light text-sm">
+        <p className="text-center mt-6 text-text-muted-light text-sm pb-8">
           Already have an account?{" "}
           <Link href="/sign-in" className="text-primary font-medium hover:underline">
             Sign in

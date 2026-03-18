@@ -156,24 +156,27 @@ function AssetFormDrawer({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/20 z-40" onClick={onClose} />
-      <div className="fixed top-0 right-0 h-full w-[480px] bg-surface-light border-l border-border-light shadow-2xl z-50 flex flex-col animate-slide-in">
+      <div className="fixed inset-0 bg-black/20 z-40 transition-opacity" onClick={onClose} />
+      <div className="fixed inset-x-0 bottom-0 h-[90vh] md:right-0 md:top-0 md:h-full md:w-[480px] bg-surface-light border-l border-border-light shadow-2xl z-50 flex flex-col animate-slide-in rounded-t-2xl md:rounded-none">
+        {/* Mobile drag handle */}
+        <div className="md:hidden w-8 h-1 bg-[#E4D9C8] rounded-full mx-auto mt-3 mb-1 flex-shrink-0" />
+
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-border-light">
-          <h2 className="text-2xl font-bold">{editing ? "Edit asset" : "Add new asset"}</h2>
+        <div className="flex items-center justify-between px-6 md:p-6 py-4 border-b border-border-light">
+          <h2 className="text-xl md:text-2xl font-bold">{editing ? "Edit asset" : "Add new asset"}</h2>
           <button onClick={onClose} className="p-2 hover:bg-background-light rounded-lg transition-colors">
             <X size={20} />
           </button>
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto px-6 md:p-6 py-4 space-y-6 pb-24 md:pb-6">
           {/* Type selector */}
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-text-muted-light mb-2 block">
               Asset type
             </label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {(Object.keys(assetTypeConfig) as Asset["type"][]).map((t) => {
                 const cfg = assetTypeConfig[t];
                 const selected = type === t;
@@ -205,7 +208,7 @@ function AssetFormDrawer({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Vanguard S&P 500"
-              className="w-full px-4 py-3 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
+              className="w-full px-4 h-12 md:h-11 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
 
@@ -221,7 +224,7 @@ function AssetFormDrawer({
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 placeholder="10,000"
-                className="w-full pl-8 pr-4 py-3 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
+                className="w-full pl-8 pr-4 h-12 md:h-11 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
               />
             </div>
           </div>
@@ -239,7 +242,7 @@ function AssetFormDrawer({
                   value={returnRate}
                   onChange={(e) => setReturnRate(e.target.value)}
                   placeholder="8.5"
-                  className="w-full px-4 py-3 pr-10 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
+                  className="w-full px-4 h-12 md:h-11 pr-10 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
                 />
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted-light font-medium">%</span>
               </div>
@@ -256,7 +259,7 @@ function AssetFormDrawer({
                 type="date"
                 value={maturityDate}
                 onChange={(e) => setMaturityDate(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
+                className="w-full px-4 h-12 md:h-11 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
               />
             </div>
           )}
@@ -274,7 +277,7 @@ function AssetFormDrawer({
                   value={sipAmount}
                   onChange={(e) => setSipAmount(e.target.value)}
                   placeholder="500"
-                  className="w-full pl-8 pr-4 py-3 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
+                  className="w-full pl-8 pr-4 h-12 md:h-11 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
                 />
               </div>
             </div>
@@ -302,16 +305,16 @@ function AssetFormDrawer({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-border-light flex gap-3">
+        <div className="px-6 md:p-6 py-4 border-t border-border-light flex gap-3 pb-safe">
           <button
             onClick={() => { onClose(); resetForm(); }}
-            className="flex-1 py-3 rounded-xl border border-border-light text-text-main-light font-medium hover:bg-background-light transition-colors"
+            className="flex-1 h-12 md:h-11 rounded-xl border border-border-light text-text-main-light font-medium hover:bg-background-light transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-1 py-3 rounded-xl bg-primary text-white font-medium hover:bg-opacity-90 transition-opacity"
+            className="flex-1 h-12 md:h-11 rounded-xl bg-primary text-white font-medium hover:bg-opacity-90 transition-opacity"
           >
             {editing ? "Save changes" : "Add asset"}
           </button>
@@ -392,24 +395,27 @@ function IncomeFormDrawer({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/20 z-40" onClick={onClose} />
-      <div className="fixed top-0 right-0 h-full w-[480px] bg-surface-light border-l border-border-light shadow-2xl z-50 flex flex-col animate-slide-in">
+      <div className="fixed inset-0 bg-black/20 z-40 transition-opacity" onClick={onClose} />
+      <div className="fixed inset-x-0 bottom-0 h-[90vh] md:right-0 md:top-0 md:h-full md:w-[480px] bg-surface-light border-l border-border-light shadow-2xl z-50 flex flex-col animate-slide-in rounded-t-2xl md:rounded-none">
+        {/* Mobile drag handle */}
+        <div className="md:hidden w-8 h-1 bg-[#E4D9C8] rounded-full mx-auto mt-3 mb-1 flex-shrink-0" />
+
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-border-light">
-          <h2 className="text-2xl font-bold">{editing ? "Edit income" : "Add income source"}</h2>
+        <div className="flex items-center justify-between px-6 md:p-6 py-4 border-b border-border-light">
+          <h2 className="text-xl md:text-2xl font-bold">{editing ? "Edit income" : "Add income source"}</h2>
           <button onClick={onClose} className="p-2 hover:bg-background-light rounded-lg transition-colors">
             <X size={20} />
           </button>
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto px-6 md:p-6 py-4 space-y-6 pb-24 md:pb-6">
           {/* Type selector */}
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-text-muted-light mb-2 block">
               Income type
             </label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {(Object.keys(incomeTypeConfig) as IncomeSource["type"][]).map((t) => {
                 const cfg = incomeTypeConfig[t];
                 const selected = type === t;
@@ -441,7 +447,7 @@ function IncomeFormDrawer({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Full-time job"
-              className="w-full px-4 py-3 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
+              className="w-full px-4 h-12 md:h-11 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
 
@@ -459,7 +465,7 @@ function IncomeFormDrawer({
                     value={annualAmount}
                     onChange={(e) => setAnnualAmount(e.target.value)}
                     placeholder="2,400"
-                    className="w-full pl-8 pr-4 py-3 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
+                    className="w-full pl-8 pr-4 h-12 md:h-11 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
                 {annualAmount && parseFloat(annualAmount) > 0 && (
@@ -479,7 +485,7 @@ function IncomeFormDrawer({
                     <button
                       key={f}
                       onClick={() => setFrequency(f)}
-                      className={`py-2.5 rounded-xl border-2 text-sm font-medium capitalize transition-colors ${
+                      className={`py-2.5 h-12 md:h-11 rounded-xl border-2 text-sm font-medium capitalize transition-colors ${
                         frequency === f
                           ? "border-primary bg-[#f2e7da] text-primary"
                           : "border-border-light text-text-muted-light hover:bg-background-light"
@@ -503,7 +509,7 @@ function IncomeFormDrawer({
                   value={monthlyAmount}
                   onChange={(e) => setMonthlyAmount(e.target.value)}
                   placeholder="5,000"
-                  className="w-full pl-8 pr-4 py-3 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
+                  className="w-full pl-8 pr-4 h-12 md:h-11 rounded-xl border border-border-light bg-background-light text-text-main-light outline-none focus:ring-2 focus:ring-primary/30"
                 />
               </div>
             </div>
@@ -545,16 +551,16 @@ function IncomeFormDrawer({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-border-light flex gap-3">
+        <div className="px-6 md:p-6 py-4 border-t border-border-light flex gap-3 pb-safe">
           <button
             onClick={() => { onClose(); resetForm(); }}
-            className="flex-1 py-3 rounded-xl border border-border-light text-text-main-light font-medium hover:bg-background-light transition-colors"
+            className="flex-1 h-12 md:h-11 rounded-xl border border-border-light text-text-main-light font-medium hover:bg-background-light transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-1 py-3 rounded-xl bg-primary text-white font-medium hover:bg-opacity-90 transition-opacity"
+            className="flex-1 h-12 md:h-11 rounded-xl bg-primary text-white font-medium hover:bg-opacity-90 transition-opacity"
           >
             {editing ? "Save changes" : "Add income"}
           </button>
@@ -650,13 +656,13 @@ export default function AssetsPage() {
       <AppNavigation />
 
       {/* ─── Main Content ─── */}
-      <main className="flex-1 p-10 overflow-y-auto">
-        <div className="max-w-[900px]">
+      <main className="flex-1 px-4 py-6 md:px-9 md:py-8 pb-24 md:pb-8 overflow-y-auto">
+        <div className="max-w-[900px] mx-auto">
           {/* Header */}
-          <div className="flex items-start justify-between mb-8">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 md:mb-8">
             <div>
-              <h1 className="text-4xl font-bold mb-2">Assets & Income</h1>
-              <p className="text-lg text-text-muted-light">
+              <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">Assets & Income</h1>
+              <p className="text-sm md:text-lg text-text-muted-light">
                 {assets.length} asset{assets.length !== 1 ? "s" : ""} · {formatCurrency(totalAssetValue, currency)} total
                 {" · "}{incomeSources.length} income source{incomeSources.length !== 1 ? "s" : ""}
               </p>
@@ -671,7 +677,7 @@ export default function AssetsPage() {
                   setIncomeDrawerOpen(true);
                 }
               }}
-              className="flex items-center gap-2 bg-primary text-white px-5 py-3 rounded-xl font-medium hover:bg-opacity-90 transition-opacity"
+              className="flex items-center justify-center gap-2 bg-primary text-white px-5 h-12 md:h-10 rounded-xl font-medium hover:bg-opacity-90 transition-opacity w-full md:w-auto text-sm md:text-base"
             >
               <Plus size={18} />
               {activeTab === "assets" ? "Add asset" : "Add income"}
@@ -679,10 +685,10 @@ export default function AssetsPage() {
           </div>
 
           {/* ─── Tabs ─── */}
-          <div className="flex gap-1 bg-surface-light border border-border-light rounded-2xl p-1.5 mb-8">
+          <div className="flex gap-1 bg-surface-light border border-border-light rounded-2xl p-1.5 mb-6 md:mb-8">
             <button
               onClick={() => setActiveTab("assets")}
-              className={`flex-1 py-3 rounded-xl text-sm font-medium transition-colors ${
+              className={`flex-1 h-12 md:h-11 rounded-xl text-sm md:text-base font-medium transition-colors ${
                 activeTab === "assets"
                   ? "bg-primary text-white shadow-sm"
                   : "text-text-muted-light hover:text-text-main-light"
@@ -692,13 +698,13 @@ export default function AssetsPage() {
             </button>
             <button
               onClick={() => setActiveTab("income")}
-              className={`flex-1 py-3 rounded-xl text-sm font-medium transition-colors ${
+              className={`flex-1 h-12 md:h-11 rounded-xl text-sm md:text-base font-medium transition-colors ${
                 activeTab === "income"
                   ? "bg-primary text-white shadow-sm"
                   : "text-text-muted-light hover:text-text-main-light"
               }`}
             >
-              Income Sources ({incomeSources.length})
+              Income ({incomeSources.length})
             </button>
           </div>
 
@@ -707,40 +713,40 @@ export default function AssetsPage() {
             <>
               {/* Repayable summary */}
               {repayableValue > 0 && (
-                <div className="bg-[#E8F0EA] border border-[#bdd4c1] rounded-[20px] p-5 mb-6 flex items-center justify-between">
+                <div className="bg-[#E8F0EA] border border-[#bdd4c1] rounded-[20px] p-5 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
-                    <div className="text-sm font-bold text-[#5A7C60] uppercase tracking-wider">
+                    <div className="text-xs md:text-sm font-bold text-[#5A7C60] uppercase tracking-wider">
                       Available for loan repayment
                     </div>
-                    <div className="text-2xl font-bold text-[#3a5a3e] mt-1">
+                    <div className="text-xl md:text-2xl font-bold text-[#3a5a3e] mt-1">
                       {formatCurrency(repayableValue, currency)}
                     </div>
                   </div>
-                  <div className="text-xs text-[#5A7C60]">
+                  <div className="text-xs md:text-sm text-[#5A7C60]">
                     {assets.filter((a) => a.useToRepay).length} asset{assets.filter((a) => a.useToRepay).length !== 1 ? "s" : ""} earmarked
                   </div>
                 </div>
               )}
 
               {assets.length === 0 ? (
-                <div className="bg-surface-light border border-border-light rounded-[20px] p-12 text-center">
+                <div className="bg-surface-light border border-border-light rounded-[20px] p-6 md:p-12 text-center">
                   <div className="w-16 h-16 rounded-full bg-[#f2e7da] flex items-center justify-center mx-auto mb-4">
                     <TrendingUp size={28} className="text-primary" />
                   </div>
-                  <h3 className="text-xl font-medium mb-2">No assets yet</h3>
-                  <p className="text-text-muted-light mb-6">
+                  <h3 className="text-lg md:text-xl font-medium mb-2">No assets yet</h3>
+                  <p className="text-sm md:text-base text-text-muted-light mb-6">
                     Add your assets to see how they can accelerate your loan payoff
                   </p>
                   <button
                     onClick={() => { setEditingAsset(null); setAssetDrawerOpen(true); }}
-                    className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-medium hover:bg-opacity-90 transition-opacity"
+                    className="inline-flex items-center justify-center gap-2 bg-primary text-white px-6 h-12 md:h-10 rounded-xl font-medium hover:bg-opacity-90 transition-opacity w-full md:w-auto text-sm md:text-base"
                   >
                     <Plus size={18} />
                     Add your first asset
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
                   {assets.map((asset) => {
                     const cfg = assetTypeConfig[asset.type];
                     const isConfirm = confirmDelete === asset.id;
@@ -748,33 +754,33 @@ export default function AssetsPage() {
                     return (
                       <div
                         key={asset.id}
-                        className="bg-surface-light border border-border-light rounded-[20px] p-6 flex flex-col justify-between hover:shadow-md transition-shadow"
+                        className="bg-surface-light border border-border-light rounded-[20px] p-5 md:p-6 flex flex-col justify-between hover:shadow-md transition-shadow"
                       >
                         {/* Top row */}
-                        <div className="flex items-start gap-4 mb-4">
-                          <div className={`w-12 h-12 rounded-full ${cfg.bg} flex items-center justify-center ${cfg.fg} flex-shrink-0`}>
+                        <div className="flex items-start gap-3 md:gap-4 mb-4">
+                          <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full ${cfg.bg} flex items-center justify-center ${cfg.fg} flex-shrink-0`}>
                             {cfg.icon}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-medium text-lg truncate">{asset.name}</h3>
-                            <p className="text-sm text-text-muted-light mt-0.5">{cfg.label}</p>
+                            <h3 className="font-medium text-base md:text-lg truncate">{asset.name}</h3>
+                            <p className="text-xs md:text-sm text-text-muted-light mt-0.5">{cfg.label}</p>
                           </div>
                         </div>
 
                         {/* Value + details */}
                         <div className="grid grid-cols-2 gap-4 mb-4">
                           <div>
-                            <div className="text-xs font-bold uppercase tracking-wider text-text-muted-light mb-1">
+                            <div className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-text-muted-light mb-1">
                               {asset.type === "fd" ? "Principal" : "Value"}
                             </div>
-                            <div className="text-xl font-bold">{formatCurrency(asset.value, currency)}</div>
+                            <div className="text-lg md:text-xl font-bold">{formatCurrency(asset.value, currency)}</div>
                           </div>
                           {asset.type !== "savings" && (
                             <div>
-                              <div className="text-xs font-bold uppercase tracking-wider text-text-muted-light mb-1">
+                              <div className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-text-muted-light mb-1">
                                 {asset.type === "fd" ? "Interest" : "Return"}
                               </div>
-                              <div className="text-xl font-bold text-text-muted-light">
+                              <div className="text-lg md:text-xl font-bold text-text-muted-light">
                                 {asset.returnRate}%
                               </div>
                             </div>
@@ -783,24 +789,24 @@ export default function AssetsPage() {
 
                         {/* Extra details */}
                         {asset.maturityDate && (
-                          <div className="text-sm text-text-muted-light mb-3">
+                          <div className="text-xs md:text-sm text-text-muted-light mb-3">
                             Matures: {new Date(asset.maturityDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
                           </div>
                         )}
                         {asset.sipAmount && (
-                          <div className="text-sm text-text-muted-light mb-3">
+                          <div className="text-xs md:text-sm text-text-muted-light mb-3">
                             SIP: {formatCurrency(asset.sipAmount, currency)}/mo
                           </div>
                         )}
 
                         {/* Use to repay toggle */}
                         <div className="flex items-center justify-between py-3 px-4 bg-background-light rounded-xl mb-4">
-                          <span className="text-sm font-medium">Use to repay loan</span>
+                          <span className="text-xs md:text-sm font-medium">Use to repay loan</span>
                           <button
                             onClick={() => handleToggleRepay(asset)}
                             className={`transition-colors ${asset.useToRepay ? "text-sage" : "text-text-muted-light"}`}
                           >
-                            {asset.useToRepay ? <ToggleRight size={30} /> : <ToggleLeft size={30} />}
+                            {asset.useToRepay ? <ToggleRight size={28} /> : <ToggleLeft size={28} />}
                           </button>
                         </div>
 
@@ -808,14 +814,14 @@ export default function AssetsPage() {
                         <div className="flex gap-2 pt-4 border-t border-border-light">
                           <button
                             onClick={() => { setEditingAsset(asset); setAssetDrawerOpen(true); }}
-                            className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-border-light text-text-main-light text-sm font-medium hover:bg-background-light transition-colors"
+                            className="flex-1 flex items-center justify-center gap-1.5 px-4 h-10 rounded-xl border border-border-light text-text-main-light text-xs md:text-sm font-medium hover:bg-background-light transition-colors"
                           >
                             <Pencil size={14} />
                             Edit
                           </button>
                           <button
                             onClick={() => handleDeleteAsset(asset.id)}
-                            className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                            className={`flex-1 flex items-center justify-center gap-1.5 px-4 h-10 rounded-xl text-xs md:text-sm font-medium transition-colors ${
                               isConfirm
                                 ? "bg-red-50 border border-red-200 text-red-600"
                                 : "border border-border-light text-text-muted-light hover:text-red-500 hover:border-red-200"
@@ -832,12 +838,12 @@ export default function AssetsPage() {
                   {/* Add card */}
                   <button
                     onClick={() => { setEditingAsset(null); setAssetDrawerOpen(true); }}
-                    className="border-2 border-dashed border-border-light rounded-[20px] p-6 flex flex-col items-center justify-center gap-3 min-h-[280px] hover:border-primary hover:bg-[#faf6f0] transition-colors group"
+                    className="border-2 border-dashed border-border-light rounded-[20px] p-6 flex flex-col items-center justify-center gap-3 min-h-[240px] md:min-h-[280px] hover:border-primary hover:bg-[#faf6f0] transition-colors group"
                   >
-                    <div className="w-12 h-12 rounded-full bg-[#f2e7da] flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#f2e7da] flex items-center justify-center group-hover:bg-primary/10 transition-colors">
                       <Plus size={22} className="text-primary" />
                     </div>
-                    <span className="font-medium text-text-muted-light group-hover:text-primary transition-colors">
+                    <span className="font-medium text-sm md:text-base text-text-muted-light group-hover:text-primary transition-colors">
                       Add another asset
                     </span>
                   </button>
@@ -850,24 +856,24 @@ export default function AssetsPage() {
           {activeTab === "income" && (
             <>
               {incomeSources.length === 0 ? (
-                <div className="bg-surface-light border border-border-light rounded-[20px] p-12 text-center">
+                <div className="bg-surface-light border border-border-light rounded-[20px] p-6 md:p-12 text-center">
                   <div className="w-16 h-16 rounded-full bg-[#f2e7da] flex items-center justify-center mx-auto mb-4">
                     <Briefcase size={28} className="text-primary" />
                   </div>
-                  <h3 className="text-xl font-medium mb-2">No income sources yet</h3>
-                  <p className="text-text-muted-light mb-6">
+                  <h3 className="text-lg md:text-xl font-medium mb-2">No income sources yet</h3>
+                  <p className="text-sm md:text-base text-text-muted-light mb-6">
                     Track your income to calculate your monthly surplus for extra repayments
                   </p>
                   <button
                     onClick={() => { setEditingIncome(null); setIncomeDrawerOpen(true); }}
-                    className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-medium hover:bg-opacity-90 transition-opacity"
+                    className="inline-flex items-center justify-center gap-2 bg-primary text-white px-6 h-12 md:h-10 rounded-xl font-medium hover:bg-opacity-90 transition-opacity w-full md:w-auto text-sm md:text-base"
                   >
                     <Plus size={18} />
                     Add income source
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
                   {incomeSources.map((source) => {
                     const cfg = incomeTypeConfig[source.type];
                     const isConfirm = confirmDelete === source.id;
@@ -875,16 +881,16 @@ export default function AssetsPage() {
                     return (
                       <div
                         key={source.id}
-                        className="bg-surface-light border border-border-light rounded-[20px] p-6 flex flex-col justify-between hover:shadow-md transition-shadow"
+                        className="bg-surface-light border border-border-light rounded-[20px] p-5 md:p-6 flex flex-col justify-between hover:shadow-md transition-shadow"
                       >
                         {/* Top */}
-                        <div className="flex items-start gap-4 mb-4">
-                          <div className={`w-12 h-12 rounded-full ${cfg.bg} flex items-center justify-center ${cfg.fg} flex-shrink-0`}>
+                        <div className="flex items-start gap-3 md:gap-4 mb-4">
+                          <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full ${cfg.bg} flex items-center justify-center ${cfg.fg} flex-shrink-0`}>
                             {cfg.icon}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-medium text-lg truncate">{source.name}</h3>
-                            <p className="text-sm text-text-muted-light mt-0.5">
+                            <h3 className="font-medium text-base md:text-lg truncate">{source.name}</h3>
+                            <p className="text-xs md:text-sm text-text-muted-light mt-0.5">
                               {cfg.label}
                               {source.isIrregular && (
                                 <span className="ml-1.5 px-2 py-0.5 bg-[#F4EED1] text-[#8C8040] rounded-full text-[10px] font-bold uppercase">
@@ -897,15 +903,15 @@ export default function AssetsPage() {
 
                         {/* Amount */}
                         <div className="mb-4">
-                          <div className="text-xs font-bold uppercase tracking-wider text-text-muted-light mb-1">
+                          <div className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-text-muted-light mb-1">
                             Monthly
                           </div>
-                          <div className="text-2xl font-bold">
+                          <div className="text-lg md:text-2xl font-bold">
                             {formatCurrency(source.monthlyAmount, currency)}
-                            <span className="text-sm font-normal text-text-muted-light">/mo</span>
+                            <span className="text-xs md:text-sm font-normal text-text-muted-light">/mo</span>
                           </div>
                           {source.type === "dividend" && source.annualAmount && (
-                            <div className="text-sm text-text-muted-light mt-1">
+                            <div className="text-xs md:text-sm text-text-muted-light mt-1">
                               {formatCurrency(source.annualAmount, currency)}/yr · {source.frequency} payouts
                             </div>
                           )}
@@ -913,12 +919,12 @@ export default function AssetsPage() {
 
                         {/* Use to repay toggle */}
                         <div className="flex items-center justify-between py-3 px-4 bg-background-light rounded-xl mb-4">
-                          <span className="text-sm font-medium">Use for loan repayment</span>
+                          <span className="text-xs md:text-sm font-medium">Use for loan repayment</span>
                           <button
                             onClick={() => handleToggleIncomeRepay(source)}
                             className={`transition-colors ${source.useToRepay ? "text-sage" : "text-text-muted-light"}`}
                           >
-                            {source.useToRepay ? <ToggleRight size={30} /> : <ToggleLeft size={30} />}
+                            {source.useToRepay ? <ToggleRight size={28} /> : <ToggleLeft size={28} />}
                           </button>
                         </div>
 
@@ -926,14 +932,14 @@ export default function AssetsPage() {
                         <div className="flex gap-2 pt-4 border-t border-border-light">
                           <button
                             onClick={() => { setEditingIncome(source); setIncomeDrawerOpen(true); }}
-                            className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-border-light text-text-main-light text-sm font-medium hover:bg-background-light transition-colors"
+                            className="flex-1 flex items-center justify-center gap-1.5 px-4 h-10 rounded-xl border border-border-light text-text-main-light text-xs md:text-sm font-medium hover:bg-background-light transition-colors"
                           >
                             <Pencil size={14} />
                             Edit
                           </button>
                           <button
                             onClick={() => handleDeleteIncome(source.id)}
-                            className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                            className={`flex-1 flex items-center justify-center gap-1.5 px-4 h-10 rounded-xl text-xs md:text-sm font-medium transition-colors ${
                               isConfirm
                                 ? "bg-red-50 border border-red-200 text-red-600"
                                 : "border border-border-light text-text-muted-light hover:text-red-500 hover:border-red-200"
@@ -950,12 +956,12 @@ export default function AssetsPage() {
                   {/* Add card */}
                   <button
                     onClick={() => { setEditingIncome(null); setIncomeDrawerOpen(true); }}
-                    className="border-2 border-dashed border-border-light rounded-[20px] p-6 flex flex-col items-center justify-center gap-3 min-h-[200px] hover:border-primary hover:bg-[#faf6f0] transition-colors group"
+                    className="border-2 border-dashed border-border-light rounded-[20px] p-6 flex flex-col items-center justify-center gap-3 min-h-[200px] md:min-h-[240px] hover:border-primary hover:bg-[#faf6f0] transition-colors group"
                   >
-                    <div className="w-12 h-12 rounded-full bg-[#f2e7da] flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#f2e7da] flex items-center justify-center group-hover:bg-primary/10 transition-colors">
                       <Plus size={22} className="text-primary" />
                     </div>
-                    <span className="font-medium text-text-muted-light group-hover:text-primary transition-colors">
+                    <span className="font-medium text-sm md:text-base text-text-muted-light group-hover:text-primary transition-colors">
                       Add income source
                     </span>
                   </button>
@@ -966,25 +972,25 @@ export default function AssetsPage() {
 
           {/* ═══════ Monthly Surplus Card ═══════ */}
           <div
-            className={`mt-8 rounded-[20px] p-6 border ${
+            className={`mt-6 md:mt-8 rounded-[20px] p-5 md:p-6 border ${
               surplusPositive
                 ? "bg-[#E8F0EA] border-[#bdd4c1]"
                 : "bg-[#F5E8E5] border-[#ddbcb3]"
             }`}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <div className={`text-xs font-bold uppercase tracking-wider mb-1 ${
+                <div className={`text-[10px] md:text-xs font-bold uppercase tracking-wider mb-1 ${
                   surplusPositive ? "text-[#5A7C60]" : "text-[#A65B50]"
                 }`}>
                   Monthly surplus
                 </div>
-                <div className={`font-display text-3xl font-bold ${
+                <div className={`font-display text-2xl md:text-3xl font-bold ${
                   surplusPositive ? "text-[#3a5a3e]" : "text-[#8B3E33]"
                 }`}>
                   {surplusPositive ? "+" : ""}{formatCurrency(surplus, currency)}
                 </div>
-                <div className={`text-sm mt-1 ${
+                <div className={`text-xs md:text-sm mt-1 ${
                   surplusPositive ? "text-[#5A7C60]" : "text-[#A65B50]"
                 }`}>
                   {surplusPositive
@@ -993,10 +999,10 @@ export default function AssetsPage() {
                 </div>
               </div>
 
-              <div className="text-right">
-                <div className="text-sm text-text-muted-light space-y-1">
-                  <div>Income: <span className="font-medium text-text-main-light">{formatCurrency(totalMonthlyIncome, currency)}</span></div>
-                  <div>EMIs: <span className="font-medium text-text-main-light">−{formatCurrency(totalMonthlyEMI, currency)}</span></div>
+              <div className="text-left sm:text-right border-t sm:border-t-0 pt-3 sm:pt-0 border-black/10">
+                <div className="text-xs md:text-sm text-text-muted-light space-y-1">
+                  <div className="flex justify-between sm:justify-end gap-4"><span>Income:</span> <span className="font-medium text-text-main-light">{formatCurrency(totalMonthlyIncome, currency)}</span></div>
+                  <div className="flex justify-between sm:justify-end gap-4"><span>EMIs:</span> <span className="font-medium text-text-main-light">−{formatCurrency(totalMonthlyEMI, currency)}</span></div>
                 </div>
               </div>
             </div>

@@ -240,14 +240,17 @@ export default function LoanFormModal({
         onClick={onClose}
       />
 
-      {/* Drawer */}
+      {/* Drawer / Bottom Sheet */}
       <div
-        className="fixed right-0 top-0 h-full w-full max-w-[520px] bg-background-light z-50 shadow-2xl 
-          flex flex-col animate-slide-in overflow-hidden"
+        className="fixed inset-x-0 bottom-0 h-[90vh] md:right-0 md:top-0 md:h-full md:w-full md:max-w-[520px] bg-background-light z-50 shadow-2xl 
+          flex flex-col animate-slide-in overflow-hidden rounded-t-2xl md:rounded-none"
       >
+        {/* Mobile drag handle */}
+        <div className="md:hidden w-8 h-1 bg-[#E4D9C8] rounded-full mx-auto mt-3 mb-1 flex-shrink-0" />
+
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 border-b border-border-light">
-          <h2 className="font-display text-2xl font-bold">
+        <div className="flex items-center justify-between px-6 md:px-8 py-4 md:py-6 border-b border-border-light">
+          <h2 className="font-display text-xl md:text-2xl font-bold">
             {editingLoan ? "Edit loan" : "Add new loan"}
           </h2>
           <button
@@ -259,13 +262,13 @@ export default function LoanFormModal({
         </div>
 
         {/* Form body — scrollable */}
-        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+        <div className="flex-1 overflow-y-auto px-6 md:px-8 py-4 md:py-6 space-y-6 pb-24 md:pb-6">
           {/* ─── Section 1: Loan Basics ─── */}
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-text-muted-light mb-3 block">
               Loan Type
             </label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {loanTypes.map((lt) => (
                 <button
                   key={lt.value}
@@ -297,7 +300,7 @@ export default function LoanFormModal({
               onChange={(e) => setName(e.target.value)}
               onBlur={() => handleBlur("name")}
               placeholder="e.g. Chase Student Loan"
-              className={`w-full px-4 py-3 rounded-xl border bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30 ${
+              className={`w-full px-4 h-12 md:h-10 py-3 md:py-2 rounded-xl border bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30 ${
                 touched.name && errors.name ? "border-primary" : "border-border-light"
               }`}
             />
@@ -319,7 +322,7 @@ export default function LoanFormModal({
                 onChange={(e) => setPrincipal(e.target.value)}
                 onBlur={() => handleBlur("principal")}
                 placeholder="50,000"
-                className={`w-full pl-8 pr-4 py-3 rounded-xl border bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30 ${
+                className={`w-full pl-8 pr-4 h-12 md:h-10 py-3 md:py-2 rounded-xl border bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30 ${
                   touched.principal && errors.principal ? "border-primary" : "border-border-light"
                 }`}
               />
@@ -342,7 +345,7 @@ export default function LoanFormModal({
                 onChange={(e) => setBalance(e.target.value)}
                 onBlur={() => handleBlur("balance")}
                 placeholder="45,000"
-                className={`w-full pl-8 pr-4 py-3 rounded-xl border bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30 ${
+                className={`w-full pl-8 pr-4 h-12 md:h-10 py-3 md:py-2 rounded-xl border bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30 ${
                   touched.balance && errors.balance ? "border-primary" : "border-border-light"
                 }`}
               />
@@ -365,7 +368,7 @@ export default function LoanFormModal({
                 onChange={(e) => setRate(e.target.value)}
                 onBlur={() => handleBlur("rate")}
                 placeholder="6.5"
-                className={`w-full px-4 pr-10 py-3 rounded-xl border bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30 ${
+                className={`w-full px-4 pr-10 h-12 md:h-10 py-3 md:py-2 rounded-xl border bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30 ${
                   touched.rate && errors.rate ? "border-primary" : "border-border-light"
                 }`}
               />
@@ -391,7 +394,7 @@ export default function LoanFormModal({
                     onBlur={() => handleBlur("term")}
                     placeholder="5"
                     min="0"
-                    className={`w-full px-4 pr-14 py-3 rounded-xl border bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30 ${
+                    className={`w-full px-4 pr-14 h-12 md:h-10 py-3 md:py-2 rounded-xl border bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30 ${
                       touched.term && errors.term ? "border-primary" : "border-border-light"
                     }`}
                   />
@@ -406,7 +409,7 @@ export default function LoanFormModal({
                     placeholder="0"
                     min="0"
                     max="11"
-                    className={`w-full px-4 pr-16 py-3 rounded-xl border bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30 ${
+                    className={`w-full px-4 pr-16 h-12 md:h-10 py-3 md:py-2 rounded-xl border bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30 ${
                       touched.term && errors.term ? "border-primary" : "border-border-light"
                     }`}
                   />
@@ -424,14 +427,14 @@ export default function LoanFormModal({
             <button
               type="button"
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="flex items-center justify-between w-full text-sm font-bold uppercase tracking-wider text-text-muted-light hover:text-text-main-light transition-colors"
+              className="flex items-center justify-between w-full text-sm font-bold uppercase tracking-wider text-text-muted-light hover:text-text-main-light transition-colors py-2"
             >
               Advanced Options
               {showAdvanced ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
 
             {showAdvanced && (
-              <div className="space-y-5 mt-5 animate-fade-in">
+              <div className="space-y-5 mt-3 animate-fade-in">
                 {/* EMI Override */}
                 <div>
                   <label className="text-xs font-bold uppercase tracking-wider text-text-muted-light mb-1.5 block">
@@ -444,7 +447,7 @@ export default function LoanFormModal({
                       value={emiOverride}
                       onChange={(e) => setEmiOverride(e.target.value)}
                       placeholder={computedEMI > 0 ? formatCurrency2dp(computedEMI, currency) : "Auto-calculated"}
-                      className="w-full pl-8 pr-4 py-3 rounded-xl border border-border-light bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30"
+                      className="w-full pl-8 pr-4 h-12 md:h-10 py-3 md:py-2 rounded-xl border border-border-light bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30"
                     />
                   </div>
                   {computedEMI > 0 && !emiOverride && (
@@ -482,7 +485,7 @@ export default function LoanFormModal({
                         value={penaltyPercent}
                         onChange={(e) => setPenaltyPercent(e.target.value)}
                         placeholder="2.0"
-                        className="w-full px-4 pr-10 py-3 rounded-xl border border-border-light bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30"
+                        className="w-full px-4 pr-10 h-12 md:h-10 py-3 md:py-2 rounded-xl border border-border-light bg-surface-light text-text-main-light placeholder:text-text-muted-light/50 outline-none transition-shadow focus:ring-2 focus:ring-primary/30"
                       />
                       <span className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted-light font-medium">%</span>
                     </div>
@@ -498,7 +501,7 @@ export default function LoanFormModal({
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-border-light bg-surface-light text-text-main-light outline-none transition-shadow focus:ring-2 focus:ring-primary/30"
+                    className="w-full px-4 h-12 md:h-10 py-3 md:py-2 rounded-xl border border-border-light bg-surface-light text-text-main-light outline-none transition-shadow focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
 
@@ -521,16 +524,16 @@ export default function LoanFormModal({
         </div>
 
         {/* Footer */}
-        <div className="px-8 py-5 border-t border-border-light bg-background-light flex gap-3">
+        <div className="px-6 md:px-8 py-4 md:py-5 border-t border-border-light bg-background-light flex gap-3 pb-safe">
           <button
             onClick={onClose}
-            className="flex-1 px-6 py-3 rounded-xl border border-border-light text-text-main-light font-medium hover:bg-surface-light transition-colors"
+            className="flex-1 px-6 h-12 md:h-10 rounded-xl border border-border-light text-text-main-light text-sm md:text-base font-medium hover:bg-surface-light transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-1 px-6 py-3 rounded-xl bg-primary text-white font-medium hover:bg-opacity-90 transition-opacity"
+            className="flex-1 px-6 h-12 md:h-10 rounded-xl bg-primary text-white text-sm md:text-base font-medium hover:bg-opacity-90 transition-opacity"
           >
             {editingLoan ? "Save changes" : "Add loan"}
           </button>

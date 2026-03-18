@@ -70,55 +70,59 @@ export default function ScenariosPage() {
       <AppNavigation />
 
       {/* ─── Main Content ─── */}
-      <main className="flex-1 p-10 overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-display font-semibold mb-2 text-text-main-light dark:text-text-main-dark">
-              My Scenarios
-            </h1>
-            <p className="text-text-muted-light dark:text-text-muted-dark">
-              Build custom repayment strategies and compare their impact on your timeline.
-            </p>
-          </div>
-          <button
-            onClick={() => {
-              setEditingScenario(null);
-              setDrawerOpen(true);
-            }}
-            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-xl font-medium transition-colors shadow-sm"
-          >
-            <Plus size={18} />
-            New Scenario
-          </button>
-        </div>
-
-        {/* Cards Row */}
-        <div className="flex gap-6 overflow-x-auto pb-6 snap-x">
-          {scenarios.map((sc) => (
-            <div key={sc.id} className="snap-start">
-              <ScenarioCard
-                scenario={sc}
-                isActive={activeScenario === sc.id}
-                result={results[sc.id]}
-                onMakeActive={() => setActiveScenario(sc.id)}
-                onEdit={() => {
-                  setEditingScenario(sc);
-                  setDrawerOpen(true);
-                }}
-                onDelete={() => removeScenario(sc.id)}
-                onRename={(newName) => handleRename(sc.id, newName)}
-              />
+      <main className="flex-1 px-4 py-6 md:px-9 md:py-8 pb-24 md:pb-8 overflow-y-auto">
+        <div className="max-w-[1200px] mx-auto">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 md:mb-8">
+            <div>
+              <h1 className="text-2xl md:text-4xl font-display font-semibold mb-1 md:mb-2 text-text-main-light dark:text-text-main-dark">
+                My Scenarios
+              </h1>
+              <p className="text-sm md:text-base text-text-muted-light dark:text-text-muted-dark">
+                Build custom repayment strategies and compare their impact on your timeline.
+              </p>
             </div>
-          ))}
-        </div>
+            <button
+              onClick={() => {
+                setEditingScenario(null);
+                setDrawerOpen(true);
+              }}
+              className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-5 h-12 md:h-10 rounded-xl font-medium transition-colors shadow-sm w-full md:w-auto text-sm md:text-base"
+            >
+              <Plus size={18} />
+              New Scenario
+            </button>
+          </div>
 
-        {/* Comparison Table */}
-        <div className="mt-4">
-          <h2 className="text-xl font-display font-medium text-text-main-light dark:text-text-main-dark mb-4">
-            Strategy Comparison
-          </h2>
-          <ComparisonTable scenarios={scenarios} results={results} baselineId={baselineId} />
+          {/* Cards Row */}
+          <div className="flex gap-4 md:gap-6 overflow-x-auto pb-4 md:pb-6 snap-x snap-mandatory hide-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+            {scenarios.map((sc) => (
+              <div key={sc.id} className="snap-start flex-shrink-0 w-[280px] md:w-[320px]">
+                <ScenarioCard
+                  scenario={sc}
+                  isActive={activeScenario === sc.id}
+                  result={results[sc.id]}
+                  onMakeActive={() => setActiveScenario(sc.id)}
+                  onEdit={() => {
+                    setEditingScenario(sc);
+                    setDrawerOpen(true);
+                  }}
+                  onDelete={() => removeScenario(sc.id)}
+                  onRename={(newName) => handleRename(sc.id, newName)}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Comparison Table */}
+          <div className="mt-6 md:mt-8">
+            <h2 className="text-lg md:text-xl font-display font-medium text-text-main-light dark:text-text-main-dark mb-4">
+              Strategy Comparison
+            </h2>
+            <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 pb-4">
+              <ComparisonTable scenarios={scenarios} results={results} baselineId={baselineId} />
+            </div>
+          </div>
         </div>
       </main>
 
@@ -131,3 +135,4 @@ export default function ScenariosPage() {
     </div>
   );
 }
+

@@ -111,13 +111,13 @@ export default function AnalyticsPage() {
       <div className="bg-background-light dark:bg-background-dark min-h-screen flex">
         {/* Basic sidebar for empty state */}
         <AppNavigation />
-        <main className="flex-1 p-10 flex flex-col items-center justify-center text-center">
+        <main className="flex-1 px-4 py-6 md:px-9 md:py-8 pb-24 md:pb-8 flex flex-col items-center justify-center text-center">
           <BarChart3 size={48} className="text-text-muted-light mb-4 opacity-50" />
           <h2 className="text-xl font-display font-semibold text-text-main-light mb-2">No Data Available</h2>
           <p className="text-text-muted-light max-w-sm mb-6">
             Add some loans and income sources first to see your analytics.
           </p>
-          <Link href="/loans" className="bg-primary text-white px-6 py-2 rounded-xl font-medium shadow-sm hover:hover:bg-primary/90">
+          <Link href="/loans" className="bg-primary text-white px-6 h-12 md:h-10 flex items-center justify-center rounded-xl font-medium shadow-sm hover:hover:bg-primary/90">
             Go to My Loans
           </Link>
         </main>
@@ -244,20 +244,20 @@ export default function AnalyticsPage() {
       <AppNavigation />
 
       {/* ─── Main Content ─── */}
-      <main className="flex-1 p-10 overflow-y-auto max-w-[1200px]">
+      <main className="flex-1 px-4 py-6 md:px-9 md:py-8 pb-24 md:pb-8 overflow-y-auto max-w-[1200px] mx-auto w-full">
         {/* Screen Header */}
-        <div className="no-print flex items-center justify-between mb-8">
+        <div className="no-print flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 md:mb-8">
           <div>
-            <h1 className="text-3xl font-display font-semibold mb-2 text-text-main-light">
+            <h1 className="text-2xl md:text-4xl font-display font-semibold mb-1 md:mb-2 text-text-main-light">
               Analytics & Insights
             </h1>
-            <p className="text-text-muted-light">
+            <p className="text-sm md:text-base text-text-muted-light">
               Deep dive into your repayment projections and cash flow distribution.
             </p>
           </div>
           <button
             onClick={handlePrint}
-            className="flex items-center gap-2 bg-white border border-border-light text-text-main-light px-5 py-2.5 rounded-xl font-medium hover:bg-surface-light shadow-sm transition-colors"
+            className="flex items-center justify-center gap-2 bg-white border border-border-light text-text-main-light px-5 h-12 md:h-10 rounded-xl font-medium hover:bg-surface-light shadow-sm transition-colors w-full md:w-auto text-sm md:text-base"
           >
             <Printer size={18} />
             Export Report
@@ -300,15 +300,15 @@ export default function AnalyticsPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           {/* CHART 1: Amortization Breakdown (Full Width) */}
-          <div className="chart-card lg:col-span-2 bg-white border border-border-light rounded-2xl p-6 shadow-sm">
-            <div className="mb-6">
-              <h3 className="text-xl font-display font-medium text-text-main-light">Amortization Breakdown</h3>
-              <p className="text-sm text-text-muted-light">Cumulative principal vs interest paid over time.</p>
+          <div className="chart-card lg:col-span-2 bg-white border border-border-light rounded-2xl p-5 md:p-6 shadow-sm">
+            <div className="mb-4 md:mb-6">
+              <h3 className="text-lg md:text-xl font-display font-medium text-text-main-light">Amortization Breakdown</h3>
+              <p className="text-xs md:text-sm text-text-muted-light">Cumulative principal vs interest paid over time.</p>
             </div>
-            <div className="h-[350px] w-full">
-              <ResponsiveContainer>
+            <div className="h-[240px] md:h-[350px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chart1Data} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                   <XAxis dataKey="monthLabel" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} minTickGap={30} />
@@ -318,26 +318,27 @@ export default function AnalyticsPage() {
                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                   />
                   <ReferenceLine x={chart1Data.find(d => d.unixTimestamp > todayTimestamp)?.monthLabel || chart1Data[0]?.monthLabel} stroke={COLORS.midnight} strokeDasharray="3 3" label={{ position: 'top', value: 'Today', fill: COLORS.midnight, fontSize: 12 }} />
-                  <Area type="monotone" dataKey="principalPaid" name="Principal Paid" stackId="1" stroke={COLORS.sage} fill={COLORS.sage} fillOpacity={0.8} />
-                  <Area type="monotone" dataKey="interestPaid" name="Interest Paid" stackId="1" stroke={COLORS.terracottaLight} fill={COLORS.terracottaLight} fillOpacity={0.8} />
+                  <Area type="monotone" dataKey="principalPaid" name="Principal" stackId="1" stroke={COLORS.sage} fill={COLORS.sage} fillOpacity={0.8} />
+                  <Area type="monotone" dataKey="interestPaid" name="Interest" stackId="1" stroke={COLORS.terracottaLight} fill={COLORS.terracottaLight} fillOpacity={0.8} />
+                  <Legend wrapperStyle={{ fontSize: 12, paddingTop: 10 }} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
 
           {/* CHART 2: Debt Payoff Waterfall */}
-          <div className="chart-card bg-white border border-border-light rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
+          <div className="chart-card bg-white border border-border-light rounded-2xl p-5 md:p-6 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 md:mb-6">
               <div>
-                <h3 className="text-xl font-display font-medium text-text-main-light">Debt Waterfall</h3>
-                <p className="text-sm text-text-muted-light">Loan balances reducing over time.</p>
+                <h3 className="text-lg md:text-xl font-display font-medium text-text-main-light">Debt Waterfall</h3>
+                <p className="text-xs md:text-sm text-text-muted-light">Loan balances reducing over time.</p>
               </div>
-              <div className="no-print flex bg-surface-light rounded-lg p-1">
+              <div className="no-print flex bg-surface-light rounded-lg p-1 self-start sm:self-auto">
                 {(["Monthly", "Quarterly", "Yearly"] as const).map((period) => (
                   <button
                     key={period}
                     onClick={() => setWaterfallPeriod(period)}
-                    className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                    className={`px-3 py-1 text-[10px] md:text-xs font-medium rounded-md transition-colors ${
                       waterfallPeriod === period ? "bg-white shadow-sm text-text-main-light" : "text-text-muted-light hover:text-text-main-light"
                     }`}
                   >
@@ -346,8 +347,8 @@ export default function AnalyticsPage() {
                 ))}
               </div>
             </div>
-            <div className="h-[280px] w-full">
-              <ResponsiveContainer>
+            <div className="h-[200px] md:h-[280px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chart2Data} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                   <XAxis dataKey="monthLabel" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} minTickGap={20} />
@@ -360,19 +361,20 @@ export default function AnalyticsPage() {
                   {loans.map((loan) => (
                     <Bar key={loan.id} dataKey={loan.id} name={loan.name} stackId="a" fill={COLORS.loanTypes[loan.type as keyof typeof COLORS.loanTypes] || COLORS.loanTypes.other} radius={[4, 4, 4, 4]} />
                   ))}
+                  <Legend wrapperStyle={{ fontSize: 12, paddingTop: 10 }} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
           {/* CHART 3: Asset Growth vs Loan Balance */}
-          <div className="chart-card bg-white border border-border-light rounded-2xl p-6 shadow-sm">
-            <div className="mb-6">
-              <h3 className="text-xl font-display font-medium text-text-main-light">Assets vs Debt</h3>
-              <p className="text-sm text-text-muted-light">When will your net worth go positive?</p>
+          <div className="chart-card bg-white border border-border-light rounded-2xl p-5 md:p-6 shadow-sm">
+            <div className="mb-4 md:mb-6">
+              <h3 className="text-lg md:text-xl font-display font-medium text-text-main-light">Assets vs Debt</h3>
+              <p className="text-xs md:text-sm text-text-muted-light">When will your net worth go positive?</p>
             </div>
-            <div className="h-[280px] w-full">
-              <ResponsiveContainer>
+            <div className="h-[200px] md:h-[280px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chart3Data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                   <XAxis dataKey="monthLabel" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} minTickGap={30} />
@@ -381,7 +383,7 @@ export default function AnalyticsPage() {
                     formatter={(value) => formatCurrency(Number(value), currency)}
                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                   />
-                  <Legend iconType="circle" wrapperStyle={{ fontSize: 12, marginTop: 10 }} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: 12, paddingTop: 10 }} />
                   {crossoverDate && (
                     <ReferenceLine x={crossoverDate} stroke={COLORS.terracotta} strokeDasharray="3 3" label={{ position: 'insideTopLeft', value: `Debt-Free: ${crossoverDate}`, fill: COLORS.terracotta, fontSize: 12 }} />
                   )}
@@ -393,13 +395,13 @@ export default function AnalyticsPage() {
           </div>
 
           {/* CHART 4: Monthly Cash Flow */}
-          <div className="chart-card lg:col-span-2 bg-white border border-border-light rounded-2xl p-6 shadow-sm">
-            <div className="mb-6">
-              <h3 className="text-xl font-display font-medium text-text-main-light">12-Month Cash Flow</h3>
-              <p className="text-sm text-text-muted-light">How your regular monthly income will be distributed.</p>
+          <div className="chart-card lg:col-span-2 bg-white border border-border-light rounded-2xl p-5 md:p-6 shadow-sm">
+            <div className="mb-4 md:mb-6">
+              <h3 className="text-lg md:text-xl font-display font-medium text-text-main-light">12-Month Cash Flow</h3>
+              <p className="text-xs md:text-sm text-text-muted-light">How your regular monthly income will be distributed.</p>
             </div>
-            <div className="h-[350px] w-full">
-              <ResponsiveContainer>
+            <div className="h-[240px] md:h-[350px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chart4Data} layout="vertical" margin={{ top: 10, right: 10, left: 30, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E2E8F0" />
                   <XAxis type="number" tickFormatter={(val: number) => formatAxisTick(val, currency)} tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: '#94A3B8' }} />
@@ -409,10 +411,10 @@ export default function AnalyticsPage() {
                     cursor={{ fill: 'transparent' }}
                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                   />
-                  <Legend iconType="circle" wrapperStyle={{ fontSize: 12, marginTop: 10 }} />
-                  <Bar dataKey="StandardEMI" name="Minimum EMIs" stackId="a" fill={COLORS.terracotta} radius={[0, 0, 0, 0]} barSize={20} />
-                  <Bar dataKey="ExtraPayments" name="Extra Debt Payments" stackId="a" fill={COLORS.terracottaLight} radius={[0, 0, 0, 0]} />
-                  <Bar dataKey="Surplus" name="Remaining Surplus" stackId="a" fill={COLORS.sage} radius={[0, 4, 4, 0]} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: 12, paddingTop: 10 }} />
+                  <Bar dataKey="StandardEMI" name="Min EMIs" stackId="a" fill={COLORS.terracotta} radius={[0, 0, 0, 0]} barSize={20} />
+                  <Bar dataKey="ExtraPayments" name="Extra Payments" stackId="a" fill={COLORS.terracottaLight} radius={[0, 0, 0, 0]} />
+                  <Bar dataKey="Surplus" name="Surplus" stackId="a" fill={COLORS.sage} radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

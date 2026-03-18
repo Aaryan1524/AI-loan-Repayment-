@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import HydrationProvider from "@/components/providers/HydrationProvider";
+import BottomNav from "@/components/layout/BottomNav";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -31,7 +32,10 @@ export default function RootLayout({
       <body
         className={`${dmSans.variable} ${playfair.variable} font-body antialiased`}
       >
-        <HydrationProvider>{children}</HydrationProvider>
+        <HydrationProvider>
+          {children}
+          <BottomNav />
+        </HydrationProvider>
       </body>
     </html>
   );

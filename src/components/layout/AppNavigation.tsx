@@ -43,7 +43,7 @@ export default function AppNavigation({ userName }: AppNavigationProps) {
   };
 
   return (
-    <aside className="no-print w-[240px] flex-shrink-0 flex flex-col border-r border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark py-8 px-4 h-screen sticky top-0">
+    <aside className="no-print hidden md:flex w-[240px] flex-shrink-0 flex-col border-r border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark py-8 px-4 h-screen sticky top-0">
       <div className="flex items-center gap-2 px-4 mb-10">
         <div className="w-2.5 h-2.5 rounded-full bg-primary" />
         <span className="font-display font-bold text-xl tracking-tight">ClearDebt</span>
