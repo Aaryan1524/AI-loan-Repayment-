@@ -5,7 +5,7 @@ import type { AdviceResponse } from "@/app/api/advice/route";
 import LoanFormModal from "@/components/loans/LoanFormModal";
 import { createClient } from "@/lib/supabase/client";
 import { useFinancialData } from "@/hooks/useFinancialData";
-import { formatCurrency } from "@/lib/formatCurrency";
+import { formatCurrency, SUPPORTED_CURRENCIES, type CurrencyCode } from "@/lib/formatCurrency";
 import {
   Home,
   GraduationCap,
@@ -96,6 +96,7 @@ function InsightSkeleton() {
 export default function DashboardPage() {
   const addLoan = useAppStore((s) => s.addLoan);
   const currency = useAppStore((s) => s.currency);
+  const setCurrency = useAppStore((s) => s.setCurrency);
 
   /* ─── Unified financial data ─── */
   const {
@@ -233,13 +234,32 @@ export default function DashboardPage() {
       <main className="flex-1 px-4 py-6 md:px-9 md:py-8 pb-24 md:pb-8 overflow-y-auto relative">
         <div>
           {/* Header */}
-          <header className="mb-6 md:mb-8">
-            <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">
-              {userName ? `Welcome back, ${userName}` : "Your repayment overview"}
-            </h1>
-            <p className="text-sm md:text-lg text-text-muted-light dark:text-text-muted-dark">
-              Based on your current loans and assets — updated today
-            </p>
+          <header className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">
+                {userName ? `Welcome back, ${userName}` : "Your repayment overview"}
+              </h1>
+              <p className="text-sm md:text-lg text-text-muted-light dark:text-text-muted-dark">
+                Based on your current loans and assets — updated today
+              </p>
+            </div>
+            
+            {/* Mobile-only currency picker */}
+            <div className="md:hidden flex items-center gap-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl p-1.5 self-start">
+              {SUPPORTED_CURRENCIES.map((c) => (
+                <button
+                  key={c.code}
+                  onClick={() => setCurrency(c.code as CurrencyCode)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                    currency === c.code
+                      ? "bg-primary/10 text-primary"
+                      : "text-text-muted-light dark:text-text-muted-dark hover:bg-border-light/20"
+                  }`}
+                >
+                  {c.symbol} {c.code}
+                </button>
+              ))}
+            </div>
           </header>
 
           {/* ─── Top Summary Cards ─── */}
