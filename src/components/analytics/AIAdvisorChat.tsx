@@ -7,11 +7,16 @@ import { useAppStore } from "@/lib/store";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+/* ─── Constants ─── */
+const CHAT_STORAGE_KEY = "cleardebt_ai_chat_history";
+const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
 /* ─── Types ─── */
 interface Message {
   role: "user" | "assistant";
   content: string;
   id: string;
+  timestamp?: number;
 }
 
 /* ─── Suggested starter prompts ─── */
@@ -129,6 +134,35 @@ export default function AIAdvisorChat() {
   const [hasStarted, setHasStarted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Load messages from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(CHAT_STORAGE_KEY);
+      if (stored) {
+        const parsed: Message[] = JSON.parse(stored);
+        const now = Date.now();
+        // Filter out messages older than 1 week
+        const recentMessages = parsed.filter(m => !m.timestamp || (now - m.timestamp < ONE_WEEK_MS));
+        
+        if (recentMessages.length > 0) {
+          setMessages(recentMessages);
+          setHasStarted(true);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to parse chat history:", e);
+    }
+  }, []);
+
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
+    } else {
+      localStorage.removeItem(CHAT_STORAGE_KEY);
+    }
+  }, [messages]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
@@ -149,7 +183,7 @@ export default function AIAdvisorChat() {
   const sendMessage = async (text: string) => {
     if (!text.trim() || isTyping) return;
     setHasStarted(true);
-    const userMsg: Message = { role: "user", content: text.trim(), id: crypto.randomUUID() };
+    const userMsg: Message = { role: "user", content: text.trim(), id: crypto.randomUUID(), timestamp: Date.now() };
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
     setInput("");
@@ -164,9 +198,9 @@ export default function AIAdvisorChat() {
         }),
       });
       const data = await res.json();
-      setMessages(prev => [...prev, { role: "assistant", content: data.reply ?? "Sorry, I couldn't respond. Try again.", id: crypto.randomUUID() }]);
+      setMessages(prev => [...prev, { role: "assistant", content: data.reply ?? "Sorry, I couldn't respond. Try again.", id: crypto.randomUUID(), timestamp: Date.now() }]);
     } catch {
-      setMessages(prev => [...prev, { role: "assistant", content: "Network error — please check your connection and try again.", id: crypto.randomUUID() }]);
+      setMessages(prev => [...prev, { role: "assistant", content: "Network error — please check your connection and try again.", id: crypto.randomUUID(), timestamp: Date.now() }]);
     } finally {
       setIsTyping(false);
     }
