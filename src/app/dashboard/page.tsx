@@ -242,118 +242,111 @@ export default function DashboardPage() {
             </p>
           </header>
 
-          {/* ─── Summary Cards + AI Advisor Row ─── */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 auto-rows-max lg:auto-rows-min">
-            {/* Top Summary Cards */}
-            <div className="lg:col-span-8 flex flex-col gap-4 md:gap-6">
-              {/* Total Debt & Payoff Date Row */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
-                {/* Total Debt */}
-                <div className="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-[20px] p-5 md:p-6 flex flex-col justify-between">
-                  <div>
-                    <div className="text-xs md:text-sm font-bold tracking-wider text-text-muted-light dark:text-text-muted-dark uppercase mb-2">
-                      Total Debt
-                    </div>
-                    <div className="font-display text-3xl md:text-4xl font-bold mb-1">
-                      {loanCount > 0 ? formatCurrency(totalDebt, currency) : formatCurrency(0, currency)}
-                    </div>
-                    <div className="text-primary font-medium text-xs md:text-sm">
-                      {loanCount > 0
-                        ? `Across ${loanCount} loan${loanCount !== 1 ? "s" : ""}`
-                        : "No loans added yet"}
-                    </div>
-                  </div>
+          {/* ─── Top Summary Cards ─── */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6">
+            {/* Total Debt */}
+            <div className="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-[20px] p-5 md:p-6 flex flex-col justify-between">
+              <div>
+                <div className="text-xs md:text-sm font-bold tracking-wider text-text-muted-light dark:text-text-muted-dark uppercase mb-2">
+                  Total Debt
                 </div>
-
-                {/* Payoff Date — reactive */}
-                <div className="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-[20px] p-5 md:p-6 flex flex-col justify-between">
-                  <div>
-                    <div className="text-xs md:text-sm font-bold tracking-wider text-text-muted-light dark:text-text-muted-dark uppercase mb-2">
-                      Payoff Date
-                    </div>
-                    <div className="font-display text-3xl md:text-4xl font-bold leading-tight mb-2">
-                      {payoffMonth}<br />{payoffYear}
-                    </div>
-                  </div>
+                <div className="font-display text-3xl md:text-4xl font-bold mb-1">
+                  {loanCount > 0 ? formatCurrency(totalDebt, currency) : formatCurrency(0, currency)}
                 </div>
-
-                {/* Interest You Can Save — reactive */}
-                <div className="bg-primary rounded-[20px] p-5 md:p-6 flex flex-col justify-between text-white shadow-sm">
-                  <div>
-                    <div className="text-xs md:text-sm font-bold tracking-wider uppercase mb-2 opacity-90">
-                      Interest Saved
-                    </div>
-                    <div className="font-display text-3xl md:text-4xl font-bold mb-2">
-                      {formatCurrency(interestSaved, currency)}
-                    </div>
-                    <div className="text-xs md:text-sm font-medium opacity-90 leading-snug">
-                      {suggestedCount > 0
-                        ? `By applying ${suggestedCount} suggestion${suggestedCount !== 1 ? "s" : ""}`
-                        : "With optimized strategy"}
-                    </div>
-                  </div>
+                <div className="text-primary font-medium text-xs md:text-sm">
+                  {loanCount > 0
+                    ? `Across ${loanCount} loan${loanCount !== 1 ? "s" : ""}`
+                    : "No loans added yet"}
                 </div>
               </div>
             </div>
 
-            {/* AI Advisor Sidebar — aligns with Interest You Can Save and extends down */}
-            <div className="lg:col-span-4 lg:row-start-1 lg:row-span-2">
-              {/* ─── AI Insight Card ─── */}
-              <div className="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-[20px] p-5 md:p-6 w-full">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-terra-light dark:bg-[#4a3625] text-primary rounded-full text-xs font-bold uppercase tracking-wide mb-4 border border-border-light dark:border-[#5a422e]">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  {adviceLoading ? (
-                    <span className="flex items-center gap-1">
-                      <RefreshCw size={12} className="animate-spin" /> Recalculating…
-                    </span>
-                  ) : (
-                    "AI insight"
-                  )}
+            {/* Payoff Date — reactive */}
+            <div className="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-[20px] p-5 md:p-6 flex flex-col justify-between">
+              <div>
+                <div className="text-xs md:text-sm font-bold tracking-wider text-text-muted-light dark:text-text-muted-dark uppercase mb-2">
+                  Payoff Date
                 </div>
+                <div className="font-display text-3xl md:text-4xl font-bold leading-tight mb-2">
+                  {payoffMonth}<br />{payoffYear}
+                </div>
+              </div>
+            </div>
 
-                {adviceLoading ? (
-                  <InsightSkeleton />
-                ) : advice ? (
-                  <>
-                    <p className="text-base md:text-lg leading-relaxed text-text-main-light dark:text-text-main-dark mb-4">
-                      {advice.insight}
-                    </p>
-
-                    {advice.suggestions.length > 0 && (
-                      <ul className="space-y-2 mb-6">
-                        {advice.suggestions.map((s, i) => (
-                          <li
-                            key={i}
-                            className="flex items-start gap-2 text-text-main-light dark:text-text-main-dark"
-                          >
-                            <span className="mt-1 w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center flex-shrink-0">
-                              {i + 1}
-                            </span>
-                            <span className="text-sm leading-relaxed">{s}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-
-                    <div className="flex flex-col md:flex-row gap-3 md:gap-4">
-                      <button className="w-full md:w-auto bg-primary text-white h-12 md:h-10 px-6 rounded-xl text-sm md:text-base font-medium hover:bg-opacity-90 transition-opacity">
-                        Apply suggestions
-                      </button>
-                      <button
-                        onClick={fetchAdvice}
-                        className="w-full md:w-auto border border-border-light dark:border-border-dark text-text-main-light dark:text-text-main-dark h-12 md:h-10 px-6 rounded-xl text-sm md:text-base font-medium hover:bg-background-light dark:hover:bg-background-dark transition-colors"
-                      >
-                        Refresh insight
-                      </button>
-                    </div>
-                  </>
-                ) : null}
+            {/* Interest You Can Save — reactive */}
+            <div className="bg-primary rounded-[20px] p-5 md:p-6 flex flex-col justify-between text-white shadow-sm">
+              <div>
+                <div className="text-xs md:text-sm font-bold tracking-wider uppercase mb-2 opacity-90">
+                  Interest Saved
+                </div>
+                <div className="font-display text-3xl md:text-4xl font-bold mb-2">
+                  {formatCurrency(interestSaved, currency)}
+                </div>
+                <div className="text-xs md:text-sm font-medium opacity-90 leading-snug">
+                  {suggestedCount > 0
+                    ? `By applying ${suggestedCount} suggestion${suggestedCount !== 1 ? "s" : ""}`
+                    : "With optimized strategy"}
+                </div>
               </div>
             </div>
           </div>
 
+          {/* ─── AI Advisor Full Width Row ─── */}
+          <div className="w-full mb-4 md:mb-6">
+            <div className="bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-[20px] p-5 md:p-6 w-full">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-terra-light dark:bg-[#4a3625] text-primary rounded-full text-xs font-bold uppercase tracking-wide mb-4 border border-border-light dark:border-[#5a422e]">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                {adviceLoading ? (
+                  <span className="flex items-center gap-1">
+                    <RefreshCw size={12} className="animate-spin" /> Recalculating…
+                  </span>
+                ) : (
+                  "AI insight"
+                )}
+              </div>
+
+              {adviceLoading ? (
+                <InsightSkeleton />
+              ) : advice ? (
+                <>
+                  <p className="text-base md:text-lg leading-relaxed text-text-main-light dark:text-text-main-dark mb-4">
+                    {advice.insight}
+                  </p>
+
+                  {advice.suggestions.length > 0 && (
+                    <ul className="space-y-2 mb-6">
+                      {advice.suggestions.map((s, i) => (
+                        <li
+                          key={i}
+                          className="flex items-start gap-2 text-text-main-light dark:text-text-main-dark"
+                        >
+                          <span className="mt-1 w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center flex-shrink-0">
+                            {i + 1}
+                          </span>
+                          <span className="text-sm leading-relaxed">{s}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  <div className="flex flex-col md:flex-row gap-3 md:gap-4">
+                    <button className="w-full md:w-auto bg-primary text-white h-12 md:h-10 px-6 rounded-xl text-sm md:text-base font-medium hover:bg-opacity-90 transition-opacity">
+                      Apply suggestions
+                    </button>
+                    <button
+                      onClick={fetchAdvice}
+                      className="w-full md:w-auto border border-border-light dark:border-border-dark text-text-main-light dark:text-text-main-dark h-12 md:h-10 px-6 rounded-xl text-sm md:text-base font-medium hover:bg-background-light dark:hover:bg-background-dark transition-colors"
+                    >
+                      Refresh insight
+                    </button>
+                  </div>
+                </>
+              ) : null}
+            </div>
+          </div>
+
           {/* ─── Bottom Grid: Loans + Chart ─── */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-6 mt-4 md:mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-6">
             {/* Loans List — from store, with empty state */}
             <div className="md:col-span-1 lg:col-span-5 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-[20px] p-5 md:p-6 w-full">
               <h3 className="text-lg md:text-xl font-medium mb-4 md:mb-6">Your loans</h3>
