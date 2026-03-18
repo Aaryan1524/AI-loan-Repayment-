@@ -57,6 +57,7 @@ export interface Scenario {
   customOrder?: string[]; // Array of loan IDs for custom ranking
   lumpSums: LumpSum[];
   extraMonthlyPayment: number;
+  isActive?: boolean;
 }
 
 export interface AppState {
@@ -125,8 +126,8 @@ function mapAssetRow(row: Record<string, unknown>): Asset {
     value: row.value as number,
     returnRate: (row.return_rate ?? 0) as number,
     maturityDate: (row.maturity_date as string) || null,
-    sipAmount: (row.sip_amount as number) || undefined,
-    useToRepay: (row.use_to_repay ?? false) as boolean,
+    sipAmount: (row.monthly_sip as number) || undefined, // Mapping monthly_sip -> sipAmount
+    useToRepay: (row.use_for_repayment ?? false) as boolean, // Mapping use_for_repayment -> useToRepay
   };
 }
 
@@ -136,10 +137,12 @@ function mapIncomeRow(row: Record<string, unknown>): IncomeSource {
     type: row.type as IncomeSource["type"],
     name: row.name as string,
     monthlyAmount: (row.monthly_amount ?? 0) as number,
+    // Note: The schema provided did not have annual_amount, is_irregular, use_to_repay on the table
+    // If they were removed from the schema, we must just handle what is available.
     annualAmount: (row.annual_amount as number) || undefined,
     frequency: (row.frequency as IncomeSource["frequency"]) || undefined,
     isIrregular: (row.is_irregular as boolean) || undefined,
-    useToRepay: (row.use_to_repay ?? false) as boolean,
+    useToRepay: (row.use_to_repay ?? true) as boolean,
   };
 }
 
@@ -148,9 +151,10 @@ function mapScenarioRow(row: Record<string, unknown>): Scenario {
     id: row.id as string,
     name: row.name as string,
     strategy: (row.strategy ?? "baseline") as Strategy,
-    customOrder: (row.custom_order as string[]) || undefined,
+    customOrder: (row.loan_order as string[]) || undefined, // Mapping loan_order -> customOrder
     lumpSums: (row.lump_sums as LumpSum[]) || [],
-    extraMonthlyPayment: (row.extra_monthly_payment ?? 0) as number,
+    extraMonthlyPayment: (row.extra_monthly ?? 0) as number, // Mapping extra_monthly -> extraMonthlyPayment
+    isActive: (row.is_active ?? false) as boolean,
   };
 }
 
@@ -172,6 +176,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
   /*  Hydrate from Supabase                                             */
   /* ═══════════════════════════════════════════════════════════════════ */
   hydrateFromSupabase: async () => {
+    // If already hydrated in this session, do not re-fetch on remounts
+    if (get().isHydrated) return;
+
     set({ isLoading: true });
     const supabase = createClient();
 
@@ -202,12 +209,38 @@ export const useAppStore = create<AppState>()((set, get) => ({
     const incomeSources = (incomeRes.data || []).map(mapIncomeRow);
     const scenarios = (scenariosRes.data || []).map(mapScenarioRow);
 
+    // Default to a baseline scenario if none exist
+    let activeScen = scenarios.find((s) => s.isActive)?.id || scenarios[0]?.id || "";
+    
+    if (scenarios.length === 0) {
+       const defaultScenario: Scenario = {
+         id: crypto.randomUUID(),
+         name: "Default Plan",
+         strategy: "avalanche",
+         lumpSums: [],
+         extraMonthlyPayment: 0,
+         isActive: true,
+       };
+       scenarios.push(defaultScenario);
+       activeScen = defaultScenario.id;
+       // Background insert default scenario
+       supabase.from("scenarios").insert({
+         id: defaultScenario.id,
+         user_id: user.id,
+         name: defaultScenario.name,
+         strategy: defaultScenario.strategy,
+         lump_sums: [],
+         extra_monthly: 0,
+         is_active: true
+       }).then();
+    }
+
     set({
       loans,
       assets,
       incomeSources,
       scenarios,
-      activeScenario: scenarios[0]?.id || "",
+      activeScenario: activeScen,
       isLoading: false,
       isHydrated: true,
     });
@@ -239,7 +272,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
           term_months: loan.termMonths,
           balance: loan.balance,
           emi_override: loan.emiOverride || null,
-          prepayment_penalty: loan.prepaymentPenalty || null,
+          prepayment_penalty: loan.prepaymentPenalty || 0,
           start_date: loan.startDate || null,
           notes: loan.notes || null,
         })
@@ -256,27 +289,31 @@ export const useAppStore = create<AppState>()((set, get) => ({
     set((s) => ({ loans: s.loans.map((l) => (l.id === loan.id ? loan : l)) }));
 
     const supabase = createClient();
-    supabase
-      .from("loans")
-      .update({
-        type: loan.type,
-        name: loan.name,
-        principal: loan.principal,
-        rate: loan.rate,
-        term_months: loan.termMonths,
-        balance: loan.balance,
-        emi_override: loan.emiOverride || null,
-        prepayment_penalty: loan.prepaymentPenalty || null,
-        start_date: loan.startDate || null,
-        notes: loan.notes || null,
-      })
-      .eq("id", loan.id)
-      .then(({ error }) => {
-        if (error) {
-          console.error("Supabase loan update failed:", error);
-          set({ loans: prev });
-        }
-      });
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      supabase
+        .from("loans")
+        .update({
+          type: loan.type,
+          name: loan.name,
+          principal: loan.principal,
+          rate: loan.rate,
+          term_months: loan.termMonths,
+          balance: loan.balance,
+          emi_override: loan.emiOverride || null,
+          prepayment_penalty: loan.prepaymentPenalty || 0,
+          start_date: loan.startDate || null,
+          notes: loan.notes || null,
+        })
+        .eq("id", loan.id)
+        .eq("user_id", user.id)
+        .then(({ error }) => {
+          if (error) {
+            console.error("Supabase loan update failed:", error);
+            set({ loans: prev });
+          }
+        });
+    });
   },
 
   removeLoan: (id) => {
@@ -319,8 +356,8 @@ export const useAppStore = create<AppState>()((set, get) => ({
           value: asset.value,
           return_rate: asset.returnRate,
           maturity_date: asset.maturityDate || null,
-          sip_amount: asset.sipAmount || null,
-          use_to_repay: asset.useToRepay,
+          monthly_sip: asset.sipAmount || null,
+          use_for_repayment: asset.useToRepay,
         })
         .then(({ error }) => {
           if (error) {
@@ -335,24 +372,28 @@ export const useAppStore = create<AppState>()((set, get) => ({
     set((s) => ({ assets: s.assets.map((a) => (a.id === asset.id ? asset : a)) }));
 
     const supabase = createClient();
-    supabase
-      .from("assets")
-      .update({
-        type: asset.type,
-        name: asset.name,
-        value: asset.value,
-        return_rate: asset.returnRate,
-        maturity_date: asset.maturityDate || null,
-        sip_amount: asset.sipAmount || null,
-        use_to_repay: asset.useToRepay,
-      })
-      .eq("id", asset.id)
-      .then(({ error }) => {
-        if (error) {
-          console.error("Supabase asset update failed:", error);
-          set({ assets: prev });
-        }
-      });
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      supabase
+        .from("assets")
+        .update({
+          type: asset.type,
+          name: asset.name,
+          value: asset.value,
+          return_rate: asset.returnRate,
+          maturity_date: asset.maturityDate || null,
+          monthly_sip: asset.sipAmount || null,
+          use_for_repayment: asset.useToRepay,
+        })
+        .eq("id", asset.id)
+        .eq("user_id", user.id)
+        .then(({ error }) => {
+          if (error) {
+            console.error("Supabase asset update failed:", error);
+            set({ assets: prev });
+          }
+        });
+    });
   },
 
   removeAsset: (id) => {
@@ -394,8 +435,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
           name: source.name,
           monthly_amount: source.monthlyAmount,
           annual_amount: source.annualAmount || null,
-          frequency: source.frequency || null,
-          is_irregular: source.isIrregular || null,
+          frequency: source.frequency || 'monthly',
+          is_irregular: source.isIrregular || false,
+          use_to_repay: source.useToRepay ?? true,
         })
         .then(({ error }) => {
           if (error) {
@@ -412,23 +454,28 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }));
 
     const supabase = createClient();
-    supabase
-      .from("income_sources")
-      .update({
-        type: source.type,
-        name: source.name,
-        monthly_amount: source.monthlyAmount,
-        annual_amount: source.annualAmount || null,
-        frequency: source.frequency || null,
-        is_irregular: source.isIrregular || null,
-      })
-      .eq("id", source.id)
-      .then(({ error }) => {
-        if (error) {
-          console.error("Supabase income update failed:", error);
-          set({ incomeSources: prev });
-        }
-      });
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      supabase
+        .from("income_sources")
+        .update({
+          type: source.type,
+          name: source.name,
+          monthly_amount: source.monthlyAmount,
+          annual_amount: source.annualAmount || null,
+          frequency: source.frequency || 'monthly',
+          is_irregular: source.isIrregular || false,
+          use_to_repay: source.useToRepay ?? true,
+        })
+        .eq("id", source.id)
+        .eq("user_id", user.id)
+        .then(({ error }) => {
+          if (error) {
+            console.error("Supabase income update failed:", error);
+            set({ incomeSources: prev });
+          }
+        });
+    });
   },
 
   removeIncomeSource: (id) => {
@@ -468,9 +515,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
           user_id: user.id,
           name: scenario.name,
           strategy: scenario.strategy,
-          custom_order: scenario.customOrder || null,
+          loan_order: scenario.customOrder || null,
           lump_sums: scenario.lumpSums,
-          extra_monthly_payment: scenario.extraMonthlyPayment,
+          extra_monthly: scenario.extraMonthlyPayment,
         })
         .then(({ error }) => {
           if (error) {
@@ -494,9 +541,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
         .update({
           name: scenario.name,
           strategy: scenario.strategy,
-          custom_order: scenario.customOrder || null,
+          loan_order: scenario.customOrder || null,
           lump_sums: scenario.lumpSums,
-          extra_monthly_payment: scenario.extraMonthlyPayment,
+          extra_monthly: scenario.extraMonthlyPayment,
         })
         .eq("id", scenario.id)
         .eq("user_id", user.id)
@@ -536,7 +583,17 @@ export const useAppStore = create<AppState>()((set, get) => ({
     });
   },
 
-  setActiveScenario: (id) => set({ activeScenario: id }),
+  setActiveScenario: (id) => {
+    set({ activeScenario: id });
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      // Optimistically update active flag in DB
+      supabase.from("scenarios").update({ is_active: false }).eq("user_id", user.id).then(() => {
+        supabase.from("scenarios").update({ is_active: true }).eq("id", id).eq("user_id", user.id).then();
+      });
+    });
+  },
 
   setCurrency: (currency) => {
     if (typeof window !== "undefined") {
